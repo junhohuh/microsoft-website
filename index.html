@@ -75,6 +75,7 @@
     inset: 18px;
     pointer-events: none;
     z-index: 2;
+    display: none; /* Hide the decorative 4-corner border frame */
   }
   .corners-frame .c {
     position: absolute;
@@ -249,6 +250,10 @@
     width: 100%; height: 100vh;
     overflow: hidden;
   }
+  /* Explorer-mode glow/shadows can extend beyond the planet bounds.
+     The scene/container clipping caused the top of the glow to be cut off. */
+  .scene[data-mode="explorer"] { overflow: visible; }
+  .scene[data-mode="explorer"] .explorer-stage { overflow: visible; }
   .scene-label {
     position: absolute; top: 26px; left: 50%;
     transform: translateX(-50%);
@@ -864,6 +869,11 @@
     perspective-origin: 50% 35%;
     will-change: transform;
   }
+  /* Verified-runtime fix: stop clipping planet glow/shadows in subpages. */
+  .explorer-stage { overflow: visible !important; }
+  /* Ensure planet glow/shadows aren't clipped in explorer mode.
+     This must appear after the base .explorer-stage rule. */
+  .scene[data-mode="explorer"] .explorer-stage { overflow: visible !important; }
   .scene.is-traveling .explorer-next-wrap,
   .scene.is-traveling .x-menu-item,
   .scene.is-traveling .epl-cta {
@@ -903,8 +913,7 @@
     border-radius: 50%;
     overflow: hidden;
     box-shadow:
-      0 0 55px rgba(130,88,30,0.3),
-      0 0 160px rgba(100,65,18,0.16),
+      0 16px 48px rgba(0,0,0,0.28),
       inset -55px -80px 180px rgba(0,0,0,0.97);
     /* No transition here — the wrap-level keyframe owns motion.
        A transition on this element competes with keyframes during swaps
@@ -921,7 +930,18 @@
     /* deep terminator — planet blends into void */
     content: '';
     position: absolute; inset: 0;
-    background: radial-gradient(circle at 30% 30%, transparent 0%, transparent 33%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0.97) 100%);
+    /* Rim-only glow + terminator. The first background layer draws the rim,
+       so it stays visible even on the dark side. */
+    background:
+      radial-gradient(closest-side at 50% 50%,
+        transparent 66%,
+        var(--planet-glow, var(--mini-glow, var(--xb-glow, rgba(124,58,237,0.5)))) 75%,
+        transparent 88%),
+      radial-gradient(circle at 30% 30%,
+        transparent 0%,
+        transparent 33%,
+        rgba(0,0,0,0.72) 62%,
+        rgba(0,0,0,0.97) 100%);
     pointer-events: none;
   }
   /* ============== PLANET VARIANTS ============== */
@@ -1991,6 +2011,11 @@
 </aside>
 
 <script>
+// #region agent log script-start
+try {
+  fetch('http://127.0.0.1:7597/ingest/a5c5804b-c2aa-4fb1-aafc-edf5485fb9bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'680df7'},body:JSON.stringify({sessionId:'680df7',runId:'verify',hypothesisId:'S',location:'index.html:script-start',message:'main script loaded',data:{readyState:document.readyState,href:location.href},timestamp:Date.now()})}).catch(()=>{});
+} catch (e) {}
+// #endregion
 // ============= STARFIELD =============
 (function () {
   const c = document.getElementById('stars');
@@ -2744,6 +2769,7 @@ function applyBodyTheme(scene, info, opts = {}) {
   stage.setAttribute('data-has-ring', info.ring ? 'true' : 'false');
   body.className = 'explorer-body';
   if (info.planet) body.classList.add('planet-' + info.planet);
+  body.style.setProperty('--planet-glow', info.glow);
   let clouds = body.querySelector('.clouds');
   if (info.planet === 'earth') {
     if (!clouds) { clouds = document.createElement('div'); clouds.className = 'clouds'; body.appendChild(clouds); }
@@ -2888,6 +2914,7 @@ function updateNextPlanet(galaxyKey, pid) {
   // apply planet class
   nextBodyEl.className = 'explorer-next-body explorer-body';
   if (nextInfo.planet) nextBodyEl.classList.add('planet-' + nextInfo.planet);
+  nextBodyEl.style.setProperty('--planet-glow', nextInfo.glow);
 
   nextNameEl.textContent = nextInfo.body.toUpperCase();
   nextWrapEl.dataset.nextPid = nextPid;
