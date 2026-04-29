@@ -906,14 +906,23 @@
     z-index: 2;
     will-change: opacity;
     transform-origin: 50% 50%;
-    contain: layout paint;
+    /* `paint` containment would clip the planet's outer rim halo at the
+       wrap's box edges, producing a hard horizontal line at the top of
+       the visible silhouette. Keep layout containment for perf. */
+    contain: layout;
   }
   .explorer-body {
     position: absolute; inset: 0;
     border-radius: 50%;
     overflow: hidden;
+    /* Subtle outer rim halo — hugs the silhouette like the Jupiter reference.
+       The blur is intentionally small relative to the 150vmin planet diameter
+       (~2% of radius) so the glow reads as an edge highlight, not a flood.
+       Larger blurs fan down the off-screen sides and bleed into the viewport. */
     box-shadow:
       0 16px 48px rgba(0,0,0,0.28),
+      0 0 18px 0 var(--planet-glow, var(--xb-glow, rgba(255,255,255,0.22))),
+      0 0 40px 0 var(--planet-glow, var(--xb-glow, rgba(255,255,255,0.10))),
       inset -55px -80px 180px rgba(0,0,0,0.97);
     /* No transition here — the wrap-level keyframe owns motion.
        A transition on this element competes with keyframes during swaps
@@ -927,16 +936,12 @@
     background: radial-gradient(circle at 50% 50%, #1a1410 0%, #0d0a07 28%, #060402 65%, #020101 100%);
   }
   .explorer-body::after {
-    /* deep terminator — planet blends into void */
+    /* deep terminator — planet blends into void.
+       Rim glow lives on the parent's box-shadow (outside the silhouette),
+       so the interior stays a clean dark sphere like the Jupiter reference. */
     content: '';
     position: absolute; inset: 0;
-    /* Rim-only glow + terminator. The first background layer draws the rim,
-       so it stays visible even on the dark side. */
     background:
-      radial-gradient(closest-side at 50% 50%,
-        transparent 66%,
-        var(--planet-glow, var(--mini-glow, var(--xb-glow, rgba(124,58,237,0.5)))) 75%,
-        transparent 88%),
       radial-gradient(circle at 30% 30%,
         transparent 0%,
         transparent 33%,
