@@ -36,6 +36,11 @@
 
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font-family: 'Space Grotesk', system-ui, sans-serif; }
+  /* Reduce hanging/orphan words and keep line endings visually balanced. */
+  h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+  p, li, dt, dd, figcaption, blockquote { text-wrap: pretty; }
+  .stat-headline, .panel-title, .epl-name { text-wrap: balance; }
+  .panel-desc, .epl-blurb, .x-blurb, .galaxy-label p { text-wrap: pretty; }
 
   /* ----------- Starfield ----------- */
   #stars {
@@ -240,7 +245,7 @@
     color: var(--muted);
     line-height: 1.5;
     width: 100%;
-    max-width: 100%;
+    max-width: 31ch;
   }
   .enter-hint {
     font-family: 'JetBrains Mono', monospace;
@@ -1526,7 +1531,7 @@
     color: rgba(182,162,132,0.65);
     margin: 0 0 16px;
     letter-spacing: 0.045em;
-    max-width: 100%;
+    max-width: 46ch;
     text-shadow: 0 1px 20px rgba(0,0,0,0.98);
   }
   .epl-cta {
