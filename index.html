@@ -1630,32 +1630,12 @@
   }
   .x-cta:hover .arrow { transform: translateX(4px); }
 
-  /* HUD readouts at top-right */
-  .explorer-hud {
-    position: absolute;
-    top: 72px;
-    right: 36px;
-    z-index: 5;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    color: var(--muted);
-    text-align: right;
-  }
-  .explorer-hud .row { display: flex; justify-content: flex-end; gap: 10px; white-space: nowrap; }
-  .explorer-hud .row .lab { color: var(--dim); }
-  .explorer-hud .row .val { color: var(--fg); }
-
   /* Hide orbital scene-objects when in explorer mode (default) */
   .scene[data-mode="explorer"] .scene-objects,
   .scene[data-mode="explorer"] .orbit-line { display: none; }
   .scene[data-mode="orbit"] .explorer-stage,
   .scene[data-mode="orbit"] .explorer-menu,
-  .scene[data-mode="orbit"] .explorer-info,
-  .scene[data-mode="orbit"] .explorer-hud { display: none; }
+  .scene[data-mode="orbit"] .explorer-info { display: none; }
 
   /* ----------- Responsive ----------- */
   @media (max-width: 1100px) {
@@ -1694,7 +1674,6 @@
     }
     .x-menu-item { width: 180px; flex-shrink: 0; }
     .explorer-info { right: 12px; left: 12px; bottom: 18px; width: auto; max-width: none; }
-    .explorer-hud { display: none; }
   }
 
   /* ----------- Reduced motion ----------- */
@@ -1808,12 +1787,6 @@
       <div class="explorer-fade"></div>
     </div>
 
-    <div class="explorer-hud" id="x-hud-purple">
-      <div class="row"><span class="lab">SECTOR</span><span class="val">EXP-01</span></div>
-      <div class="row"><span class="lab">SAMPLE</span><span class="val">N=189</span></div>
-      <div class="row"><span class="lab">UPLINK</span><span class="val">STABLE</span></div>
-    </div>
-
     <nav class="explorer-menu" id="x-menu-purple" aria-label="Experienced vibecoders topics">
       <div class="x-menu-eyebrow">SELECT BODY · 06</div>
     </nav>
@@ -1880,12 +1853,6 @@
       <div class="explorer-fade"></div>
     </div>
 
-    <div class="explorer-hud" id="x-hud-teal">
-      <div class="row"><span class="lab">SECTOR</span><span class="val">NEW-02</span></div>
-      <div class="row"><span class="lab">SAMPLE</span><span class="val">N=65</span></div>
-      <div class="row"><span class="lab">UPLINK</span><span class="val">STABLE</span></div>
-    </div>
-
     <nav class="explorer-menu" id="x-menu-teal" aria-label="Newcomers topics">
       <div class="x-menu-eyebrow">SELECT BODY · 05</div>
     </nav>
@@ -1945,12 +1912,6 @@
         <button class="epl-cta" id="x-label-cta-prompt" type="button">OPEN BRIEFING</button>
       </div>
       <div class="explorer-fade"></div>
-    </div>
-
-    <div class="explorer-hud" id="x-hud-prompt">
-      <div class="row"><span class="lab">SECTOR</span><span class="val">LIB-03</span></div>
-      <div class="row"><span class="lab">CATALOG</span><span class="val">06 BODIES</span></div>
-      <div class="row"><span class="lab">UPLINK</span><span class="val">STABLE</span></div>
     </div>
 
     <nav class="explorer-menu" id="x-menu-prompt" aria-label="Prompt library categories">
@@ -2758,6 +2719,24 @@ const EXPLORER_MOTION = {
   zoomOutMs: 280,
   zoomInMs: 360
 };
+/** Keep in sync with `#panel { transition: transform 350ms ... }` */
+const PANEL_SLIDE_MS = 350;
+/** Timeout id per galaxy while waiting for briefing panel to close before navigating */
+const explorerNavAfterPanel = { purple: null, teal: null, prompt: null };
+
+function runWhenBriefingClosed(galaxyKey, fn) {
+  if (explorerNavAfterPanel[galaxyKey] != null) return;
+  const run = () => {
+    explorerNavAfterPanel[galaxyKey] = null;
+    fn();
+  };
+  if (panel.classList.contains('open')) {
+    closePanel();
+    explorerNavAfterPanel[galaxyKey] = setTimeout(run, PANEL_SLIDE_MS);
+  } else {
+    run();
+  }
+}
 
 function getNextPid(galaxyKey, fromPid = explorerSelected[galaxyKey]) {
   const ids = GALAXY_TOPICS[galaxyKey];
@@ -2767,15 +2746,22 @@ function getNextPid(galaxyKey, fromPid = explorerSelected[galaxyKey]) {
 }
 
 function advanceExplorer(galaxyKey) {
+  if (explorerNavAfterPanel[galaxyKey] != null) return;
   const now = performance.now();
   if (now - (nextAdvanceAt[galaxyKey] || 0) < 140) return;
   nextAdvanceAt[galaxyKey] = now;
   const computedNextPid = getNextPid(galaxyKey, explorerSelected[galaxyKey]);
-  if (computedNextPid) {
-    selectExplorer(galaxyKey, computedNextPid, { animate: true });
-  } else {
-    cycleExplorer(galaxyKey, +1);
-  }
+  const briefingWasOpen = panel.classList.contains('open');
+  runWhenBriefingClosed(galaxyKey, () => {
+    if (!computedNextPid) {
+      cycleExplorer(galaxyKey, +1);
+      return;
+    }
+    selectExplorer(galaxyKey, computedNextPid, {
+      animate: true,
+      afterExplorerTravel: briefingWasOpen ? () => openPanel(computedNextPid) : undefined
+    });
+  });
 }
 window.advanceExplorer = advanceExplorer;
 
@@ -2831,9 +2817,16 @@ function buildMenu(galaxyKey) {
     btn.appendChild(text);
     btn.appendChild(num);
 
-    btn.addEventListener('click', () => selectExplorer(galaxyKey, pid));
+    btn.addEventListener('click', () => {
+      if (explorerSelected[galaxyKey] === pid) return;
+      runWhenBriefingClosed(galaxyKey, () => selectExplorer(galaxyKey, pid, { animate: true }));
+    });
     btn.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectExplorer(galaxyKey, pid); }
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (explorerSelected[galaxyKey] === pid) return;
+        runWhenBriefingClosed(galaxyKey, () => selectExplorer(galaxyKey, pid, { animate: true }));
+      }
       if (e.key === 'ArrowDown') { e.preventDefault(); cycleExplorer(galaxyKey, +1); }
       if (e.key === 'ArrowUp')   { e.preventDefault(); cycleExplorer(galaxyKey, -1); }
     });
@@ -2842,15 +2835,18 @@ function buildMenu(galaxyKey) {
 }
 
 function cycleExplorer(galaxyKey, dir) {
+  if (explorerNavAfterPanel[galaxyKey] != null) return;
   const ids = GALAXY_TOPICS[galaxyKey];
   const cur = explorerSelected[galaxyKey];
   let i = ids.indexOf(cur);
   i = (i + dir + ids.length) % ids.length;
-  selectExplorer(galaxyKey, ids[i], { animate: true });
-  // focus new item
-  const menu = document.getElementById('x-menu-' + galaxyKey);
-  const btn = menu.querySelector(`[data-pid="${ids[i]}"]`);
-  if (btn) btn.focus();
+  const nextPid = ids[i];
+  runWhenBriefingClosed(galaxyKey, () => {
+    selectExplorer(galaxyKey, nextPid, { animate: true });
+    const menu = document.getElementById('x-menu-' + galaxyKey);
+    const btn = menu?.querySelector(`[data-pid="${nextPid}"]`);
+    if (btn) btn.focus();
+  });
 }
 
 function buildInfo(galaxyKey, pid) {
@@ -2969,16 +2965,23 @@ function selectExplorer(galaxyKey, pid, opts = {}) {
   if (!scene) return;
   if (explorerSelected[galaxyKey] === pid && !opts.force) return;
 
+  function invokeAfterExplorerTravel() {
+    const cb = opts.afterExplorerTravel;
+    if (typeof cb === 'function') cb();
+  }
+
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const animate = opts.animate !== false && !reducedMotion;
   if (!animate || explorerTransitioning[galaxyKey]) {
     applyExplorerSelection(galaxyKey, pid, { suppressPop: false });
+    invokeAfterExplorerTravel();
     return;
   }
 
   const stage = scene.querySelector('.explorer-stage');
   if (!stage) {
     applyExplorerSelection(galaxyKey, pid);
+    invokeAfterExplorerTravel();
     return;
   }
 
@@ -3046,6 +3049,7 @@ function selectExplorer(galaxyKey, pid, opts = {}) {
       stage.classList.remove('x-zoom-in');
       explorerTransitioning[galaxyKey] = false;
       scene.classList.remove('is-traveling');
+      invokeAfterExplorerTravel();
     }, EXPLORER_MOTION.zoomInMs);
   }, EXPLORER_MOTION.zoomOutMs);
 }
