@@ -1,0 +1,3202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vibecoding Mission Control · 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050403;
+    --bg-2: #080605;
+    --fg: #e2e8f0;
+    --muted: #94a3b8;
+    --dim: #64748b;
+    --line: rgba(148, 163, 184, 0.15);
+    --line-strong: rgba(148, 163, 184, 0.28);
+
+    --purple: #a78bfa;
+    --purple-deep: #7c3aed;
+    --purple-glow: rgba(124, 58, 237, 0.55);
+
+    --teal: #2dd4bf;
+    --teal-deep: #0d9488;
+    --teal-glow: rgba(13, 148, 136, 0.55);
+
+    --amber: #fbbf24;
+    --amber-deep: #f59e0b;
+    --amber-glow: rgba(245, 158, 11, 0.55);
+
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font-family: 'Space Grotesk', system-ui, sans-serif; }
+
+  /* ----------- Starfield ----------- */
+  #stars {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse at 50% 80%, rgba(25,17,8,0.7), transparent 60%),
+      var(--bg);
+  }
+
+  /* ----------- Screens ----------- */
+  .screen {
+    position: fixed; inset: 0; z-index: 1;
+    overflow: auto;
+    transition: opacity 350ms ease, transform 400ms cubic-bezier(.2,.7,.2,1);
+    transform-origin: center center;
+  }
+  .screen.hidden {
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  .screen.zoom-in { transform: scale(1.08); }
+
+  /* ----------- Landing ----------- */
+  #landing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    min-height: 100vh;
+  }
+
+  .corners-frame {
+    position: fixed;
+    inset: 18px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .corners-frame .c {
+    position: absolute;
+    width: 28px; height: 28px;
+    border-color: rgba(148,163,184,0.35);
+    border-style: solid;
+    border-width: 0;
+  }
+  .corners-frame .tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
+  .corners-frame .tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
+  .corners-frame .bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
+  .corners-frame .br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+
+  .top-bar {
+    position: fixed;
+    top: 26px; left: 0; right: 0;
+    display: flex; justify-content: space-between;
+    padding: 0 36px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .top-bar .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #22c55e; display: inline-block; margin-right: 6px;
+    box-shadow: 0 0 8px #22c55e;
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .landing-header {
+    text-align: center;
+    margin-bottom: 64px;
+    max-width: 880px;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .eyebrow .pip { display: inline-block; width: 6px; height: 6px; background: var(--purple); border-radius: 50%; margin-right: 10px; transform: translateY(-2px); }
+  h1.title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(32px, 6vw, 64px);
+    letter-spacing: 0.04em;
+    margin: 0;
+    line-height: 1;
+    background: linear-gradient(180deg, #fff 0%, #c4b5fd 60%, #818cf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 60px rgba(124,58,237,0.2);
+  }
+  .subtitle {
+    margin-top: 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+  }
+  .subtitle .sep { color: var(--dim); margin: 0 10px; }
+  .subtitle .n { color: var(--fg); }
+
+  .galaxies {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 64px;
+    max-width: 1200px;
+  }
+
+  .galaxy-btn {
+    background: none; border: none; color: inherit;
+    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center;
+    width: 280px;
+    padding: 0;
+    font: inherit;
+    transition: transform 300ms ease;
+  }
+  .galaxy-btn:hover { transform: translateY(-6px); }
+  .galaxy-btn:focus-visible { outline: none; }
+  .galaxy-btn:focus-visible .orb-wrap { box-shadow: 0 0 0 2px rgba(255,255,255,0.4); }
+
+  .orb-wrap {
+    position: relative;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    margin-bottom: 28px;
+    transition: box-shadow 300ms ease;
+  }
+  .ring {
+    position: absolute; inset: 0;
+    border: 1px dashed currentColor;
+    border-radius: 50%;
+    opacity: 0.35;
+    animation: spin-slow 28s linear infinite;
+  }
+  .ring.r2 { inset: 14px; opacity: 0.22; animation-duration: 42s; animation-direction: reverse; border-style: solid; border-color: currentColor; opacity: 0.18; }
+  .ring.r3 { inset: 30px; opacity: 0.2; animation-duration: 18s; }
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+  .orb-core {
+    position: absolute;
+    inset: 50px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.2) 25%, transparent 60%),
+      radial-gradient(circle at 50% 50%, var(--orb-bright), var(--orb-deep) 60%, #000 100%);
+    box-shadow:
+      0 0 40px var(--orb-glow),
+      0 0 100px var(--orb-glow),
+      inset 0 0 40px rgba(0,0,0,0.4);
+    /* Opacity-only "breathing" — the previous animation morphed the
+       box-shadow blur radius continuously, which forces repaint of the
+       glow region every frame. Opacity is GPU-composited and free. */
+    animation: pulse-orb 4.2s ease-in-out infinite;
+    will-change: opacity;
+  }
+  @keyframes pulse-orb {
+    0%,100% { opacity: 0.92; }
+    50%     { opacity: 1; }
+  }
+  .orb-stars {
+    position: absolute; inset: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    mix-blend-mode: screen;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .orb-stars svg { width: 100%; height: 100%; display: block; }
+
+  .orb-purple { color: var(--purple); --orb-bright: #c4b5fd; --orb-deep: #6d28d9; --orb-glow: var(--purple-glow); }
+  .orb-teal   { color: var(--teal);   --orb-bright: #5eead4; --orb-deep: #0f766e; --orb-glow: var(--teal-glow); }
+  .orb-amber  { color: var(--amber);  --orb-bright: #fde68a; --orb-deep: #b45309; --orb-glow: var(--amber-glow); }
+
+  .galaxy-label { text-align: center; }
+  .galaxy-label h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.18em;
+    margin: 0 0 8px;
+    font-weight: 700;
+    color: var(--fg);
+  }
+  .galaxy-label p {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    max-width: 240px;
+  }
+  .enter-hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--dim);
+    transition: color 250ms ease, transform 250ms ease;
+  }
+  .galaxy-btn:hover .enter-hint { color: var(--fg); transform: translateX(4px); }
+
+  /* ----------- Galaxy scenes ----------- */
+  .scene {
+    position: relative;
+    width: 100%; height: 100vh;
+    overflow: hidden;
+  }
+  .scene-label {
+    position: absolute; top: 26px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    z-index: 5;
+    background: rgba(5,4,3,0.7);
+    padding: 8px 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+    white-space: nowrap;
+  }
+  /* Hide landing chrome (top-bar) inside galaxy scenes */
+  body.in-galaxy .top-bar { opacity: 0; pointer-events: none; }
+  .scene-label .glyph { margin-right: 10px; }
+
+  .back-btn {
+    position: absolute; top: 22px; left: 22px; z-index: 5;
+    background: rgba(5,4,3,0.78);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--line-strong);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 200ms ease, transform 200ms ease;
+  }
+  .back-btn:hover { background: rgba(124,58,237,0.15); transform: translateX(-2px); }
+
+  .orbit-line {
+    position: absolute;
+    top: 50%; left: 50%;
+    border: 1px dashed rgba(148,163,184,0.18);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .orbit-line.o1 { width: 360px; height: 360px; }
+  .orbit-line.o2 { width: 620px; height: 620px; }
+  .orbit-line.o3 { width: 920px; height: 920px; }
+
+  .scene-objects {
+    position: absolute; inset: 0;
+  }
+
+  .space-obj {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+    background: none; border: none; padding: 0;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .space-obj:focus-visible { outline: none; }
+  .space-obj:focus-visible .obj-body { box-shadow: 0 0 0 2px rgba(255,255,255,0.5); }
+
+  .obj-body {
+    position: relative;
+    transition: transform 250ms ease, filter 250ms ease;
+  }
+  .space-obj:hover .obj-body { transform: scale(1.12); filter: brightness(1.15); }
+  .obj-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-transform: uppercase;
+    text-align: center;
+    background: rgba(5,4,3,0.78);
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    transition: color 200ms ease, border-color 200ms ease;
+    white-space: nowrap;
+  }
+  .space-obj:hover .obj-label { color: var(--fg); border-color: var(--line-strong); }
+
+  /* Sun */
+  .sun {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse 60% 50% at 35% 28%, rgba(255,255,255,0.35), transparent 60%),
+      radial-gradient(circle at 35% 30%, #fff8d4, var(--sun-c, #fbbf24) 40%, var(--sun-mid, #f59e0b) 70%, var(--sun-deep, #b45309) 100%);
+    box-shadow:
+      0 0 36px var(--sun-glow, rgba(245,158,11,0.75)),
+      0 0 70px var(--sun-glow, rgba(245,158,11,0.45)),
+      inset -4px -6px 12px rgba(0,0,0,0.2),
+      0 8px 24px rgba(0,0,0,0.2);
+    animation: spin-slow 60s linear infinite;
+    position: relative;
+  }
+  .sun::after {
+    content: ''; position: absolute; inset: -10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, transparent 45%, var(--sun-glow, rgba(245,158,11,0.2)) 85%, transparent 100%);
+    pointer-events: none;
+  }
+  .sun.purple { --sun-c: #d8b4fe; --sun-mid: #c084fc; --sun-deep: #5b21b6; --sun-glow: rgba(196,181,253,0.75); }
+  .sun.teal   { --sun-c: #7ee8d6; --sun-mid: #5eead4; --sun-deep: #0d9488; --sun-glow: rgba(94,234,212,0.7); }
+  .sun.amber  { --sun-c: #fef3c7; --sun-mid: #fde68a; --sun-deep: #d97706; --sun-glow: rgba(253,230,138,0.75); }
+
+  /* Ringed planet */
+  .planet-ringed {
+    position: relative;
+    width: 80px; height: 80px;
+    animation: bob 6s ease-in-out infinite;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.35));
+  }
+  .planet-ringed .body {
+    position: absolute;
+    width: 56px; height: 56px;
+    top: 12px; left: 12px;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse 65% 55% at 35% 28%, var(--p-bright), transparent 55%),
+      radial-gradient(ellipse 50% 45% at 38% 35%, var(--p-mid, var(--p-bright)), transparent 60%),
+      radial-gradient(circle at 50% 50%, var(--p-bright) 0%, var(--p-mid, var(--p-bright)) 25%, var(--p-deep) 65%, var(--p-deepest) 100%);
+    background-size: 100%, 100%, 100%;
+    box-shadow:
+      inset -8px -10px 16px rgba(0,0,0,0.45),
+      inset 4px 4px 10px rgba(255,255,255,0.12),
+      0 0 32px var(--p-glow, rgba(13,148,136,0.6)),
+      0 12px 28px rgba(0,0,0,0.25);
+    position: relative;
+  }
+  .planet-ringed .ring-outer, .planet-ringed .ring-inner {
+    position: absolute;
+    border-radius: 50%;
+    transform: rotateX(72deg) rotateZ(15deg);
+  }
+  .planet-ringed .ring-outer {
+    top: 33px; left: -8px;
+    width: 96px; height: 16px;
+    border: 2.5px solid var(--p-ring-color, rgba(94,234,212,0.6));
+    box-shadow:
+      inset 0 -2px 6px rgba(0,0,0,0.4),
+      inset 0 2px 4px rgba(255,255,255,0.1),
+      0 0 16px var(--p-ring-glow, rgba(94,234,212,0.35));
+    animation: ring-pulse 8s ease-in-out infinite;
+  }
+  .planet-ringed .ring-inner {
+    top: 36px; left: 2px;
+    width: 76px; height: 10px;
+    border: 1.5px solid var(--p-ring-inner-color, rgba(94,234,212,0.35));
+    box-shadow: inset 0 -1px 3px rgba(0,0,0,0.3);
+    animation: ring-pulse 8s ease-in-out infinite 0.2s;
+  }
+  .planet-ringed.purple {
+    --p-bright: #d8b4fe;
+    --p-mid: #c084fc;
+    --p-deep: #7c3aed;
+    --p-deepest: #4c1d95;
+    --p-glow: rgba(196,181,253,0.7);
+    --p-ring-color: rgba(196,181,253,0.75);
+    --p-ring-glow: rgba(196,181,253,0.4);
+    --p-ring-inner-color: rgba(196,181,253,0.35);
+  }
+  .planet-ringed.teal {
+    --p-bright: #7ee8d6;
+    --p-mid: #5eead4;
+    --p-deep: #0d9488;
+    --p-deepest: #0f766e;
+    --p-glow: rgba(94,234,212,0.65);
+    --p-ring-color: rgba(94,234,212,0.75);
+    --p-ring-glow: rgba(94,234,212,0.4);
+    --p-ring-inner-color: rgba(94,234,212,0.35);
+  }
+  .planet-ringed.amber {
+    --p-bright: #fef3c7;
+    --p-mid: #fde68a;
+    --p-deep: #d97706;
+    --p-deepest: #92400e;
+    --p-glow: rgba(253,230,138,0.7);
+    --p-ring-color: rgba(253,230,138,0.75);
+    --p-ring-glow: rgba(253,230,138,0.4);
+    --p-ring-inner-color: rgba(253,230,138,0.35);
+  }
+
+  @keyframes ring-pulse {
+    0%, 100% { transform: rotateX(72deg) rotateZ(15deg); opacity: 0.9; }
+    50% { transform: rotateX(72deg) rotateZ(17deg); opacity: 1; }
+  }
+
+  /* Rocket */
+  .rocket-wrap {
+    animation: bob 4s ease-in-out infinite;
+    font-size: 44px;
+    line-height: 1;
+    filter: drop-shadow(0 6px 16px rgba(0,0,0,0.3)) drop-shadow(0 0 12px var(--obj-glow, rgba(124,58,237,0.5)));
+    text-shadow: 0 0 8px var(--obj-glow, rgba(124,58,237,0.3));
+  }
+  .rocket-wrap.purple { --obj-glow: rgba(196,181,253,0.7); }
+  .rocket-wrap.teal { --obj-glow: rgba(94,234,212,0.7); }
+  .rocket-wrap.amber { --obj-glow: rgba(253,230,138,0.7); }
+
+  /* Satellite */
+  .satellite {
+    position: relative;
+    width: 70px; height: 50px;
+    animation: spin-slow 24s linear infinite;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+  }
+  .satellite .core {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px; height: 22px;
+    background: linear-gradient(90deg, #cbd5e1 0%, #94a3b8 50%, #64748b 100%);
+    border-radius: 3px;
+    box-shadow:
+      0 0 14px var(--sat-glow, rgba(124,58,237,0.6)),
+      inset -2px -2px 4px rgba(0,0,0,0.3),
+      inset 1px 1px 3px rgba(255,255,255,0.15);
+  }
+  .satellite .panel-l, .satellite .panel-r {
+    position: absolute; top: 50%;
+    width: 22px; height: 14px;
+    transform: translateY(-50%);
+    background:
+      linear-gradient(90deg, transparent 49%, rgba(0,0,0,0.3) 49%, rgba(0,0,0,0.3) 51%, transparent 51%),
+      linear-gradient(135deg, var(--sat-panel, #818cf8) 0%, var(--sat-panel-deep, #4338ca) 100%);
+    background-size: 6px 100%, 100% 100%;
+    border: 1.5px solid rgba(0,0,0,0.35);
+    box-shadow:
+      inset 0 1px 2px rgba(255,255,255,0.1),
+      0 0 10px var(--sat-glow, rgba(124,58,237,0.4));
+  }
+  .satellite .panel-l { left: 0; }
+  .satellite .panel-r { right: 0; }
+  .satellite .dish {
+    position: absolute; top: -8px; left: 50%;
+    transform: translateX(-50%);
+    width: 10px; height: 6px;
+    border: 1.5px solid var(--sat-panel, #818cf8);
+    border-radius: 50% 50% 0 0;
+    border-bottom: 0;
+    box-shadow: 0 0 6px var(--sat-glow, rgba(124,58,237,0.4));
+  }
+  .satellite.purple { --sat-glow: rgba(196,181,253,0.7); --sat-panel: #c084fc; --sat-panel-deep: #5b21b6; }
+  .satellite.teal { --sat-glow: rgba(94,234,212,0.7); --sat-panel: #5eead4; --sat-panel-deep: #0d9488; }
+  .satellite.amber { --sat-glow: rgba(253,230,138,0.7); --sat-panel: #fde68a; --sat-panel-deep: #d97706; }
+
+  /* Asteroid */
+  .asteroid {
+    width: 50px; height: 44px;
+    background:
+      radial-gradient(ellipse 45% 40% at 28% 25%, rgba(148,163,184,0.35), transparent 60%),
+      radial-gradient(circle at 30% 30%, #94a3b8, #64748b 45%, #475569 70%, #1e293b 100%);
+    border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+    position: relative;
+    animation: tumble 8s linear infinite;
+    box-shadow:
+      inset -4px -6px 10px rgba(0,0,0,0.6),
+      inset 2px 2px 6px rgba(255,255,255,0.1),
+      0 6px 16px rgba(0,0,0,0.35);
+  }
+  .asteroid::before, .asteroid::after {
+    content: ''; position: absolute;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.05);
+  }
+  .asteroid::before { width: 8px; height: 8px; top: 8px; left: 14px; }
+  .asteroid::after { width: 6px; height: 6px; bottom: 10px; right: 12px; }
+
+  /* Moon */
+  .moon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse 60% 50% at 30% 28%, rgba(255,255,255,0.2), transparent 65%),
+      radial-gradient(circle at 30% 30%, #f8fafc, #e2e8f0 35%, #cbd5e1 65%, #64748b 100%);
+    box-shadow:
+      inset -8px -10px 16px rgba(0,0,0,0.35),
+      inset 2px 2px 8px rgba(255,255,255,0.15),
+      0 8px 20px rgba(0,0,0,0.25),
+      0 0 24px rgba(203,213,225,0.25);
+    position: relative;
+    animation: bob 5s ease-in-out infinite;
+  }
+  .moon::before, .moon::after {
+    content: ''; position: absolute;
+    background: rgba(71,85,105,0.55);
+    border-radius: 50%;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .moon::before { width: 10px; height: 10px; top: 14px; left: 12px; }
+  .moon::after { width: 6px; height: 6px; bottom: 16px; right: 14px; }
+
+  /* UFO */
+  .ufo-wrap {
+    font-size: 44px;
+    line-height: 1;
+    animation: bob 3s ease-in-out infinite;
+    filter: drop-shadow(0 6px 16px rgba(0,0,0,0.3)) drop-shadow(0 0 14px var(--ufo-glow, rgba(94,234,212,0.7)));
+    text-shadow: 0 0 10px var(--ufo-glow, rgba(94,234,212,0.5));
+  }
+  .ufo-wrap.purple { --ufo-glow: rgba(196,181,253,0.7); }
+  .ufo-wrap.teal { --ufo-glow: rgba(94,234,212,0.7); }
+  .ufo-wrap.amber { --ufo-glow: rgba(253,230,138,0.7); }
+
+  @keyframes bob {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes tumble {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* ----------- Side Panel ----------- */
+  #panel {
+    position: fixed;
+    top: 0; right: 0;
+    width: 460px;
+    max-width: 95vw;
+    height: 100vh;
+    /* Fully opaque background — was blur(20px), which had to re-blur
+       a 460×100vh region on every frame of the slide-in.
+       The panel covers content anyway when open, so the blur was
+       paying for itself only during the slide where it stuttered most. */
+    background: #050403;
+    border-left: 3px solid var(--purple);
+    box-shadow: -20px 0 60px rgba(0,0,0,0.6), inset 1px 0 0 rgba(255,255,255,0.04);
+    transform: translateX(100%);
+    transition: transform 350ms cubic-bezier(.2,.7,.2,1);
+    will-change: transform;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #panel.open { transform: translateX(0); }
+
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .panel-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .close-btn {
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    color: var(--fg);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    transition: background 200ms ease, transform 200ms ease;
+  }
+  .close-btn:hover { background: rgba(248,113,113,0.15); transform: rotate(90deg); }
+
+  .panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px 40px;
+  }
+  .panel-body::-webkit-scrollbar { width: 6px; }
+  .panel-body::-webkit-scrollbar-track { background: transparent; }
+  .panel-body::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+
+  .panel-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 0 0 18px;
+    line-height: 1.3;
+  }
+  .stat-headline {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    color: var(--purple);
+  }
+  .panel-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .bars {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .bar-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+  .bar-label { color: var(--fg); }
+  .bar-pct { font-family: 'JetBrains Mono', monospace; color: var(--muted); font-size: 12px; }
+  .bar-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(148,163,184,0.1);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 999px;
+    /* Animate transform, not width — width triggers layout every frame
+       on every bar in the panel. scaleX is GPU-composited and silky. */
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 900ms cubic-bezier(.2,.7,.2,1);
+    will-change: transform;
+    background: var(--bar-c, var(--purple));
+    box-shadow: 0 0 8px var(--bar-c, var(--purple-glow));
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    background: var(--tag-bg, rgba(124,58,237,0.12));
+    color: var(--tag-text, var(--purple));
+  }
+
+  .section-divider {
+    height: 1px;
+    background: var(--line);
+    margin: 24px 0;
+  }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  /* Prompt library mode */
+  .prompt-mode { display: none; }
+  .prompt-mode.active { display: block; }
+  .survey-mode { display: block; }
+  .survey-mode.hidden { display: none; }
+
+  .placeholder-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    background: rgba(251,191,36,0.12);
+    color: var(--amber);
+    border: 1px solid rgba(251,191,36,0.3);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  .use-case-select {
+    width: 100%;
+    background: rgba(5,4,3,0.78);
+    color: var(--fg);
+    border: 1px solid var(--line-strong);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    margin-bottom: 18px;
+    cursor: pointer;
+  }
+  .use-case-select:focus { outline: none; border-color: var(--amber); }
+
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 18px;
+    scrollbar-width: thin;
+  }
+  .tab-bar::-webkit-scrollbar { height: 4px; }
+  .tab-bar::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 2px; }
+  .tab {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 200ms ease, border-color 200ms ease;
+  }
+  .tab:hover { color: var(--fg); }
+  .tab[aria-selected="true"] {
+    color: var(--amber);
+    border-bottom-color: var(--amber);
+  }
+
+  .tab-content { font-size: 13px; line-height: 1.6; color: var(--fg); }
+
+  .code-block {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .criteria-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .criteria-list li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .criteria-list li::before {
+    content: '';
+    flex-shrink: 0;
+    margin-top: 7px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 6px var(--amber-glow);
+  }
+
+  .bad-box {
+    background: rgba(239,68,68,0.07);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-left: 3px solid #ef4444;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #fecaca;
+    margin-bottom: 16px;
+  }
+  .fails-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #f87171;
+    margin-bottom: 8px;
+  }
+  .fails-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .fails-list li {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex; gap: 8px;
+  }
+  .fails-list li::before {
+    content: '×';
+    color: #ef4444;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ====================================================== */
+  /* ============== EXPLORER (Solar) MODE  ================ */
+  /* ====================================================== */
+
+  .explorer-stage {
+    position: absolute; inset: 0;
+    overflow: hidden;
+    perspective: 1400px;
+    perspective-origin: 50% 35%;
+    will-change: transform;
+  }
+  .scene.is-traveling .explorer-next-wrap,
+  .scene.is-traveling .x-menu-item,
+  .scene.is-traveling .epl-cta {
+    pointer-events: none;
+  }
+  /* Suppress hover/transition fights during planet travel — only the
+     keyframe should be moving anything. */
+  .scene.is-traveling .explorer-next-wrap,
+  .scene.is-traveling .explorer-next-wrap:hover {
+    transition: none;
+  }
+  .scene.is-traveling .x-menu-item {
+    transition: none;
+  }
+
+  /* Floor hidden — clean void */
+  .explorer-floor {
+    display: none;
+  }
+
+  /* The huge body peeking from below — deep low placement */
+  .explorer-body-wrap {
+    position: absolute;
+    left: 50%;
+    bottom: -112%;
+    transform: translateX(-50%);
+    width: 150vmin;
+    height: 150vmin;
+    pointer-events: none;
+    z-index: 2;
+    will-change: opacity;
+    transform-origin: 50% 50%;
+    contain: layout paint;
+  }
+  .explorer-body {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow:
+      0 0 55px rgba(130,88,30,0.3),
+      0 0 160px rgba(100,65,18,0.16),
+      inset -55px -80px 180px rgba(0,0,0,0.97);
+    /* No transition here — the wrap-level keyframe owns motion.
+       A transition on this element competes with keyframes during swaps
+       and forces extra style recalc on a 150vmin painted surface. */
+  }
+  .explorer-body::before {
+    /* dark silhouette base */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, #1a1410 0%, #0d0a07 28%, #060402 65%, #020101 100%);
+  }
+  .explorer-body::after {
+    /* deep terminator — planet blends into void */
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 30%, transparent 0%, transparent 33%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0.97) 100%);
+    pointer-events: none;
+  }
+  /* ============== PLANET VARIANTS ============== */
+  /* Unified elegant aesthetic: dark cores with shimmering light edges */
+
+  /* All planets use the same sophisticated monochromatic look */
+  .explorer-body.planet-sun::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.9), transparent 32%),
+      radial-gradient(ellipse 85% 85% at 50% 35%, rgba(220,220,220,0.4), transparent 60%),
+      radial-gradient(circle at 50% 50%, #e8e8e8 0%, #d0d0d0 25%, #808080 70%, #1a1a1a 100%);
+    background-size: 100%, 100%, 100%;
+  }
+  .explorer-body.planet-sun::after {
+    background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%);
+  }
+
+  /* MERCURY — refined grayscale sphere */
+  .explorer-body.planet-mercury::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.88), transparent 34%),
+      radial-gradient(ellipse 80% 80% at 50% 32%, rgba(200,200,200,0.35), transparent 58%),
+      radial-gradient(circle at 50% 50%, #d8dce4 0%, #b0b5c0 22%, #7a8090 65%, #2a2a3a 100%);
+    background-size: 100%, 100%, 100%;
+  }
+
+  /* SATURN — subtle banded grayscale */
+  .explorer-body.planet-saturn::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.86), transparent 35%),
+      radial-gradient(ellipse 78% 80% at 50% 32%, rgba(210,210,210,0.32), transparent 60%),
+      repeating-linear-gradient(180deg,
+        #e8e8e8 0%, #e8e8e8 3.5%,
+        #d8d8d8 3.5%, #d8d8d8 9%,
+        #c0c0c0 9%, #c0c0c0 17%,
+        #a0a0a0 17%, #a0a0a0 26%,
+        #909090 26%, #909090 38%,
+        #a0a0a0 38%, #a0a0a0 100%),
+      radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0.85) 100%);
+    background-size: 100%, 100%, 100% 100%, 100%;
+  }
+
+  /* EARTH — subtle grayscale with light clouds */
+  .explorer-body.planet-earth::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.84), transparent 36%),
+      radial-gradient(ellipse 82% 80% at 50% 32%, rgba(200,200,200,0.3), transparent 60%),
+      radial-gradient(ellipse 26% 14% at 32% 45%, rgba(120,120,120,0.18), transparent 72%),
+      radial-gradient(ellipse 18% 10% at 68% 60%, rgba(110,110,110,0.15), transparent 74%),
+      radial-gradient(circle at 50% 50%, #d0d8e0 0%, #b8c0c8 20%, #8a9099 55%, #3a3a4a 100%);
+    background-size: 100%, 100%, 100%, 100%, 100%;
+  }
+  .explorer-body.planet-earth { --cloud-opacity: 0.25; }
+  .explorer-body.planet-earth .clouds {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 26% 7% at 32% 22%, rgba(255,255,255,0.72), transparent 72%),
+      radial-gradient(ellipse 18% 6% at 68% 48%, rgba(255,255,255,0.62), transparent 74%);
+    mix-blend-mode: screen;
+    opacity: var(--cloud-opacity, 0.4);
+    pointer-events: none;
+  }
+
+  /* MARS — muted grayscale sphere */
+  .explorer-body.planet-mars::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.82), transparent 37%),
+      radial-gradient(ellipse 80% 80% at 50% 32%, rgba(200,200,200,0.28), transparent 62%),
+      radial-gradient(ellipse 30% 10% at 50% 10%, #f0f0f0, transparent 74%),
+      radial-gradient(ellipse 26% 10% at 50% 90%, #e8e8e8, transparent 74%),
+      radial-gradient(ellipse 23% 16% at 35% 50%, #808080, transparent 70%),
+      radial-gradient(circle at 50% 50%, #c8c8c8 0%, #a8a8a8 25%, #707070 65%, #2a2a2a 100%);
+    background-size: 100%, 100%, 100%, 100%, 100%, 100%;
+  }
+
+  /* JUPITER — gray-toned banded sphere */
+  .explorer-body.planet-jupiter::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.85), transparent 35%),
+      radial-gradient(ellipse 78% 80% at 50% 32%, rgba(210,210,210,0.3), transparent 62%),
+      radial-gradient(ellipse 10% 7% at 35% 55%, #505050, #303030 65%, transparent 82%),
+      repeating-linear-gradient(180deg,
+        #e0e0e0 0%, #e0e0e0 3%,
+        #d0d0d0 3%, #d0d0d0 8%,
+        #b8b8b8 8%, #b8b8b8 14%,
+        #a0a0a0 14%, #a0a0a0 22%,
+        #909090 22%, #909090 32%,
+        #a8a8a8 32%, #a8a8a8 45%,
+        #808080 45%, #808080 100%),
+      radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.08) 62%, rgba(0,0,0,0.85) 100%);
+    background-size: 100%, 100%, 100%, 100% 100%, 100%;
+  }
+
+  /* VENUS — soft light grayscale */
+  .explorer-body.planet-venus::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.9), transparent 34%),
+      radial-gradient(ellipse 80% 80% at 50% 32%, rgba(220,220,220,0.35), transparent 58%),
+      radial-gradient(ellipse 42% 20% at 38% 62%, rgba(150,150,150,0.2), transparent 70%),
+      radial-gradient(circle at 50% 50%, #e8e8e8 0%, #d8d8d8 18%, #c0c0c0 45%, #8a8a8a 80%, #2a2a2a 100%);
+    background-size: 100%, 100%, 100%, 100%;
+  }
+
+  /* NEPTUNE — darker grayscale banded */
+  .explorer-body.planet-neptune::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.78), transparent 38%),
+      radial-gradient(ellipse 78% 80% at 50% 32%, rgba(190,190,190,0.28), transparent 64%),
+      radial-gradient(ellipse 12% 8% at 62% 52%, #303030, #1a1a1a 60%, transparent 78%),
+      repeating-linear-gradient(180deg,
+        #c0c0c0 0%, #c0c0c0 4%,
+        #b0b0b0 4%, #b0b0b0 10%,
+        #a0a0a0 10%, #a0a0a0 18%,
+        #808080 18%, #808080 28%,
+        #909090 28%, #909090 40%,
+        #707070 40%, #707070 54%,
+        #606060 54%, #606060 100%),
+      radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.08) 62%, rgba(0,0,0,0.88) 100%);
+    background-size: 100%, 100%, 100%, 100% 100%, 100%;
+  }
+
+  /* URANUS — light grayscale smooth */
+  .explorer-body.planet-uranus::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.87), transparent 35%),
+      radial-gradient(ellipse 80% 80% at 50% 32%, rgba(210,210,210,0.32), transparent 60%),
+      radial-gradient(ellipse 36% 18% at 45% 56%, rgba(160,160,160,0.18), transparent 70%),
+      radial-gradient(circle at 50% 50%, #d8dce0 0%, #b8c0c8 25%, #8a9099 62%, #3a3a4a 100%);
+    background-size: 100%, 100%, 100%, 100%;
+  }
+
+  /* EUROPA — bright white with subtle cracks */
+  .explorer-body.planet-europa::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.92), transparent 33%),
+      radial-gradient(ellipse 82% 80% at 50% 32%, rgba(240,240,240,0.38), transparent 60%),
+      linear-gradient(65deg, transparent 48%, rgba(150,150,150,0.16) 49%, rgba(150,150,150,0.16) 50%, transparent 51%),
+      linear-gradient(132deg, transparent 36%, rgba(140,140,140,0.14) 37%, rgba(140,140,140,0.14) 38%, transparent 39%),
+      radial-gradient(circle at 50% 50%, #f8f8f8 0%, #e8e8e8 20%, #c8c8c8 55%, #7a7a8a 88%, #2a2a3a 100%);
+    background-size: 100%, 100%, 100%, 100%, 100%;
+  }
+
+  /* TITAN — muted brownish grayscale */
+  .explorer-body.planet-titan::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.8), transparent 36%),
+      radial-gradient(ellipse 80% 80% at 50% 32%, rgba(200,200,200,0.28), transparent 62%),
+      radial-gradient(ellipse 45% 25% at 50% 65%, rgba(140,130,120,0.22), transparent 70%),
+      radial-gradient(circle at 50% 50%, #d0c8c0 0%, #b8b0a8 28%, #9a8a7a 60%, #4a3a2a 100%);
+    background-size: 100%, 100%, 100%, 100%;
+  }
+
+  /* ENCELADUS — pristine white sphere */
+  .explorer-body.planet-enceladus::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.93), transparent 32%),
+      radial-gradient(ellipse 82% 82% at 50% 30%, rgba(245,245,245,0.4), transparent 58%),
+      linear-gradient(70deg, transparent 48%, rgba(160,160,160,0.14) 49%, rgba(160,160,160,0.14) 50%, transparent 51%),
+      linear-gradient(138deg, transparent 34%, rgba(150,150,150,0.12) 35%, rgba(150,150,150,0.12) 36%, transparent 37%),
+      radial-gradient(circle at 50% 50%, #fafafa 0%, #f0f0f0 15%, #d8d8d8 50%, #a0a0b0 85%, #3a3a4a 100%);
+    background-size: 100%, 100%, 100%, 100%, 100%;
+  }
+
+  /* TRAPPIST-1e — grayscale rocky */
+  .explorer-body.planet-trappist::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.8), transparent 37%),
+      radial-gradient(ellipse 80% 80% at 50% 32%, rgba(200,200,200,0.28), transparent 62%),
+      radial-gradient(ellipse 20% 12% at 35% 56%, #606060, transparent 70%),
+      radial-gradient(circle at 50% 50%, #c8c8c8 0%, #b0b0b0 22%, #8a8a8a 60%, #3a3a3a 100%);
+    background-size: 100%, 100%, 100%, 100%;
+  }
+
+  /* KEPLER-22b — subtle grayscale ocean */
+  .explorer-body.planet-kepler22::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.84), transparent 36%),
+      radial-gradient(ellipse 80% 80% at 50% 32%, rgba(210,210,210,0.3), transparent 60%),
+      radial-gradient(ellipse 18% 9% at 50% 14%, #f0f0f0, transparent 75%),
+      radial-gradient(ellipse 16% 8% at 50% 87%, #e8e8e8, transparent 75%),
+      radial-gradient(circle at 50% 50%, #d0d8e0 0%, #b0b8c0 25%, #808090 65%, #2a3a4a 100%);
+    background-size: 100%, 100%, 100%, 100%, 100%;
+  }
+
+  /* HD 189733 b — deep dark grayscale */
+  .explorer-body.planet-hd189::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.72), transparent 40%),
+      radial-gradient(ellipse 78% 80% at 50% 32%, rgba(180,180,180,0.25), transparent 65%),
+      radial-gradient(ellipse 40% 18% at 55% 56%, rgba(120,120,120,0.12), transparent 70%),
+      radial-gradient(circle at 50% 50%, #a0a0a0 0%, #808080 22%, #505050 60%, #0a0a0a 100%);
+    background-size: 100%, 100%, 100%, 100%;
+  }
+
+  /* 55 Cancri e — dark grayscale volcanic */
+  .explorer-body.planet-55cnc::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.78), transparent 38%),
+      radial-gradient(ellipse 78% 80% at 50% 32%, rgba(190,190,190,0.26), transparent 64%),
+      radial-gradient(ellipse 18% 12% at 35% 58%, #d8d8d8, transparent 68%),
+      radial-gradient(circle at 50% 50%, #b8b8b8 0%, #909090 28%, #606060 65%, #1a1a1a 100%);
+    background-size: 100%, 100%, 100%, 100%;
+  }
+  .explorer-body.planet-55cnc { box-shadow:
+      0 0 100px rgba(180,180,180,0.4),
+      0 0 280px rgba(160,160,160,0.2),
+      inset -40px -60px 140px rgba(0,0,0,0.78) !important; }
+
+  /* PROXIMA b — muted rocky grayscale */
+  .explorer-body.planet-proxima::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.76), transparent 39%),
+      radial-gradient(ellipse 80% 80% at 50% 32%, rgba(190,190,190,0.26), transparent 64%),
+      radial-gradient(ellipse 20% 12% at 36% 56%, #707070, transparent 70%),
+      radial-gradient(circle at 50% 50%, #c0c0c0 0%, #989898 28%, #707070 68%, #2a2a2a 100%);
+    background-size: 100%, 100%, 100%, 100%;
+  }
+
+  /* Kepler-186f — warm grayscale rocky */
+  .explorer-body.planet-kepler186::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.82), transparent 36%),
+      radial-gradient(ellipse 80% 80% at 50% 32%, rgba(210,210,210,0.3), transparent 60%),
+      radial-gradient(ellipse 18% 11% at 36% 53%, #a0a090, transparent 70%),
+      radial-gradient(circle at 50% 50%, #d8d0c8 0%, #b8a8a0 25%, #9a8a7a 60%, #3a2a1a 100%);
+    background-size: 100%, 100%, 100%, 100%;
+  }
+
+  /* PLUTO — soft pale grayscale dwarf */
+  .explorer-body.planet-pluto::before {
+    inset: -5%;
+    background:
+      radial-gradient(circle at 65% 28%, rgba(255,255,255,0.88), transparent 34%),
+      radial-gradient(ellipse 82% 82% at 50% 30%, rgba(230,230,230,0.36), transparent 58%),
+      radial-gradient(ellipse 16% 11% at 45% 38%, #f0f0f0, transparent 70%),
+      radial-gradient(ellipse 12% 9% at 62% 52%, #e8e8e8, transparent 73%),
+      radial-gradient(circle at 50% 50%, #d8d8d8 0%, #b8b8b8 25%, #8a8a9a 65%, #3a3a4a 100%);
+    background-size: 100%, 100%, 100%, 100%, 100%;
+  }
+
+  /* Override ALL planet surface textures — dark silhouettes only */
+  .explorer-body[class*="planet-"]::before {
+    inset: 0 !important;
+    background: radial-gradient(circle at 50% 50%, #1a1410 0%, #0d0a07 28%, #060402 65%, #020101 100%) !important;
+    background-size: 100% 100% !important;
+  }
+  /* sun gets a slightly brighter dark center */
+  .explorer-body.planet-sun::before {
+    background: radial-gradient(circle at 50% 50%, #251e15 0%, #120f0a 32%, #070503 70%, #020101 100%) !important;
+    inset: 0 !important;
+    background-size: 100% 100% !important;
+  }
+  .explorer-body.planet-sun::after {
+    background: radial-gradient(circle at 50% 50%, transparent 42%, rgba(0,0,0,0.82) 100%) !important;
+  }
+  /* override 55cnc glow */
+  .explorer-body.planet-55cnc {
+    box-shadow: 0 0 18px rgba(20,14,8,0.6), inset -50px -70px 160px rgba(0,0,0,0.95) !important;
+  }
+
+  /* Atmosphere halo — removed, clean dark void */
+  .explorer-halo {
+    display: none;
+  }
+
+  /* Bottom gradient — body emerges from void */
+  .explorer-fade {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 44%;
+    background: linear-gradient(180deg, transparent 0%, rgba(5,4,3,0.4) 35%, var(--bg) 100%);
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  /* Distant next-planet orb — centered above main planet, like Saturn in reference */
+  .explorer-next-wrap {
+    position: absolute;
+    left: 50%;
+    top: 24%;
+    transform: translateX(-50%);
+    right: auto;
+    bottom: auto;
+    z-index: 9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    appearance: none;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: transform 220ms var(--ease-out-quint), opacity 220ms var(--ease-out-quint);
+    will-change: transform, opacity;
+  }
+  .explorer-next-wrap > * {
+    pointer-events: none;
+  }
+  .explorer-next-wrap:hover {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.04);
+  }
+  .explorer-next-wrap:focus-visible {
+    outline: 1px solid rgba(226, 232, 240, 0.7);
+    outline-offset: 6px;
+  }
+  .explorer-next-body {
+    /* override .explorer-body's absolute positioning */
+    position: relative !important;
+    inset: auto !important;
+    width: 14vmin !important;
+    height: 14vmin !important;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow:
+      inset -5px -7px 18px rgba(0,0,0,0.92),
+      0 0 28px rgba(130,88,30,0.28),
+      0 0 60px rgba(100,65,18,0.14) !important;
+    opacity: 0.9;
+    transition: none !important;
+  }
+
+  .explorer-stage.x-zoom-out .explorer-body-wrap {
+    animation: explorerBodyExit 280ms var(--ease-out-quint) both;
+  }
+  .explorer-stage.x-zoom-out .explorer-next-wrap {
+    animation: explorerNextDive 280ms var(--ease-out-quint) both;
+  }
+  .explorer-stage.x-zoom-out .explorer-planet-label,
+  .explorer-stage.x-zoom-out .explorer-halo {
+    animation: explorerFadeOut 220ms var(--ease-out-quint) both;
+  }
+  .explorer-stage.x-zoom-in .explorer-body-wrap {
+    animation: explorerBodyEnter 320ms var(--ease-out-quint) both;
+  }
+  .explorer-stage.x-zoom-in .explorer-next-wrap {
+    animation: explorerNextRise 320ms var(--ease-out-quint) 40ms both;
+  }
+  .explorer-stage.x-zoom-in .explorer-planet-label,
+  .explorer-stage.x-zoom-in .explorer-halo {
+    animation: explorerFadeIn 260ms var(--ease-out-quint) 60ms both;
+  }
+
+  /* Opacity-led crossfade. No scale on the 150vmin body — that forces
+     repaint of huge box-shadows and is the main stutter source.
+     Pure opacity is GPU-composited and silky. */
+  @keyframes explorerBodyExit {
+    0%   { transform: translateX(-50%); opacity: 1; }
+    100% { transform: translateX(-50%); opacity: 0; }
+  }
+  @keyframes explorerBodyEnter {
+    0%   { transform: translateX(-50%); opacity: 0; }
+    100% { transform: translateX(-50%); opacity: 1; }
+  }
+
+  /* Next-orb: small element so a slight scale is cheap. Keep the
+     "drifts toward main slot" story but at GPU-friendly amplitude. */
+  @keyframes explorerNextDive {
+    0%   { transform: translateX(-50%) translateY(0)    scale(1);    opacity: 1; }
+    100% { transform: translateX(-50%) translateY(10%)  scale(1.08); opacity: 0; }
+  }
+  @keyframes explorerNextRise {
+    0%   { transform: translateX(-50%) translateY(0)    scale(0.98); opacity: 0; }
+    100% { transform: translateX(-50%) translateY(0)    scale(1);    opacity: 1; }
+  }
+  @keyframes explorerFadeOut {
+    from { opacity: 1; transform: translateX(-50%); }
+    to   { opacity: 0; transform: translateX(-50%); }
+  }
+  @keyframes explorerFadeIn {
+    from { opacity: 0; transform: translateX(-50%); }
+    to   { opacity: 1; transform: translateX(-50%); }
+  }
+  .explorer-next-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: rgba(180,160,130,0.45);
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .explorer-next-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: rgba(210,195,170,0.55);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Optional ring (for ringed bodies) — hidden, clean look */
+  .explorer-ring {
+    display: none !important;
+  }
+
+  /* Dust/particles hidden */
+  .explorer-dust { display: none; }
+
+  /* ---- Side menu (left) ---- */
+  .explorer-menu {
+    position: absolute;
+    top: 50%;
+    left: 36px;
+    transform: translateY(-50%);
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: min(64vh, 540px);
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+  .explorer-menu::-webkit-scrollbar { width: 4px; }
+  .explorer-menu::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 2px; }
+
+  .x-menu-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+
+  .x-menu-item {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px 10px 10px;
+    /* Solid (high-opacity) background instead of blur — backdrop-filter
+       on a transforming element forces re-blur every frame and was the
+       main hover/active stutter on the menu. */
+    background: rgba(5,4,3,0.92);
+    border: 1px solid var(--line);
+    border-left: 2px solid transparent;
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    transition: background 220ms ease, border-color 220ms ease, color 220ms ease, transform 220ms ease;
+    width: 280px;
+  }
+  .x-menu-item:hover {
+    background: rgba(5,4,3,0.98);
+    color: var(--fg);
+    transform: translateX(4px);
+  }
+  .x-menu-item .x-mini {
+    position: relative;
+    inset: auto;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: inset -3px -4px 6px rgba(0,0,0,0.5), 0 0 8px var(--mini-glow, rgba(124,58,237,0.5));
+    flex-shrink: 0;
+    transition: none;
+  }
+  /* Mini-orb planet textures fit inside 32px */
+  .x-menu-item .x-mini::before { animation: none; }
+  .x-menu-item .x-mini.planet-saturn::after,
+  .x-menu-item .x-mini.planet-uranus::after,
+  .x-menu-item .x-mini.planet-hd189::after {
+    /* hide rings on mini orbs (rings are drawn by stage on the body) */
+    display: none;
+  }
+  .x-menu-item .x-text {
+    display: flex; flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .x-menu-item .x-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .x-menu-item .x-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .x-menu-item .x-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+  }
+  .x-menu-item.active {
+    background: rgba(5,4,3,0.97);
+    color: var(--fg);
+    border-left-color: var(--accent, var(--purple));
+    box-shadow: -4px 0 20px var(--accent-glow, rgba(124,58,237,0.25));
+  }
+  .x-menu-item.active .x-num { color: var(--accent, var(--purple)); }
+
+  /* ---- Right info card — hidden, content lives on the planet now ---- */
+  .explorer-info { display: none; }
+
+  /* ---- On-planet content label ---- */
+  .explorer-planet-label {
+    position: absolute;
+    left: 50%;
+    bottom: 6%;
+    transform: translateX(-50%);
+    z-index: 6;
+    text-align: center;
+    width: min(520px, 76vw);
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .epl-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.52em;
+    color: rgba(195,172,130,0.48);
+    text-transform: uppercase;
+    margin: 0 0 8px;
+  }
+  .epl-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(18px, 2.4vw, 34px);
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    color: rgba(238,224,204,0.95);
+    margin: 0 0 12px;
+    line-height: 1;
+    white-space: nowrap;
+    text-shadow:
+      0 0 80px rgba(130,88,30,0.55),
+      0 0 160px rgba(100,65,18,0.3),
+      0 2px 30px rgba(0,0,0,0.95);
+  }
+  .epl-blurb {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11.5px;
+    line-height: 1.72;
+    color: rgba(182,162,132,0.65);
+    margin: 0 0 16px;
+    letter-spacing: 0.045em;
+    max-width: 460px;
+    text-shadow: 0 1px 20px rgba(0,0,0,0.98);
+  }
+  .epl-cta {
+    background: transparent;
+    border: none;
+    color: rgba(200,168,110,0.82);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.46em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0 0 8px;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: rgba(195,155,88,0.45);
+    text-underline-offset: 7px;
+    transition: color 200ms ease, text-decoration-color 200ms ease;
+  }
+  .epl-cta:hover {
+    color: rgba(230,198,138,1);
+    text-decoration-color: rgba(218,180,105,0.85);
+  }
+
+  /* ---- Right info card (legacy) ---- */
+  .explorer-info-legacy {
+    position: absolute;
+    right: 36px;
+    bottom: 56px;
+    z-index: 6;
+    width: 380px;
+    max-width: calc(100vw - 80px);
+    background: linear-gradient(180deg, rgba(5,4,3,0.9), rgba(5,4,3,0.9));
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--line-strong);
+    border-bottom: 2px solid var(--accent, var(--purple));
+    border-radius: 8px;
+    padding: 22px 24px;
+    color: var(--fg);
+  }
+  .explorer-info .x-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--accent, var(--purple));
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .explorer-info h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0 0 10px;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+  }
+  .explorer-info .x-stat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex; gap: 14px;
+    flex-wrap: wrap;
+  }
+  .explorer-info .x-stat .v { color: var(--fg); }
+  .explorer-info p.x-blurb {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0 0 18px;
+  }
+  .x-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent, var(--purple-deep));
+    color: #050403;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 12px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+    box-shadow: 0 0 0 0 var(--accent-glow, rgba(124,58,237,0.5));
+  }
+  .x-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--accent-glow, rgba(124,58,237,0.5));
+  }
+  .x-cta .arrow {
+    transition: transform 200ms ease;
+  }
+  .x-cta:hover .arrow { transform: translateX(4px); }
+
+  /* HUD readouts at top-right */
+  .explorer-hud {
+    position: absolute;
+    top: 72px;
+    right: 36px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    text-align: right;
+  }
+  .explorer-hud .row { display: flex; justify-content: flex-end; gap: 10px; white-space: nowrap; }
+  .explorer-hud .row .lab { color: var(--dim); }
+  .explorer-hud .row .val { color: var(--fg); }
+
+  /* Hide orbital scene-objects when in explorer mode (default) */
+  .scene[data-mode="explorer"] .scene-objects,
+  .scene[data-mode="explorer"] .orbit-line { display: none; }
+  .scene[data-mode="orbit"] .explorer-stage,
+  .scene[data-mode="orbit"] .explorer-menu,
+  .scene[data-mode="orbit"] .explorer-info,
+  .scene[data-mode="orbit"] .explorer-hud { display: none; }
+
+  /* ----------- Responsive ----------- */
+  @media (max-width: 1100px) {
+    .x-menu-item { width: 240px; }
+    .explorer-info { width: 320px; }
+    .galaxies { gap: 32px; }
+    .galaxy-btn { width: 240px; }
+    .orb-wrap { width: 180px; height: 180px; }
+    .orb-core { inset: 40px; }
+    .orb-stars { inset: 40px; }
+    .orbit-line.o3 { width: 700px; height: 700px; }
+    .explorer-menu { left: 18px; }
+    .x-menu-item { width: 220px; padding: 8px 10px; }
+    .explorer-info { right: 18px; bottom: 32px; width: 300px; padding: 18px 20px; }
+    .explorer-info h2 { font-size: 22px; }
+  }
+  @media (max-width: 640px) {
+    .top-bar { padding: 0 18px; font-size: 9px; }
+    h1.title { font-size: 30px; }
+    .orb-wrap { width: 150px; height: 150px; }
+    .orb-core { inset: 32px; }
+    .orb-stars { inset: 32px; }
+    #panel { width: 100%; max-width: 100vw; border-left: none; border-top: 3px solid var(--purple); }
+    .scene-label { font-size: 9px; padding: 6px 12px; }
+    .orbit-line.o2 { width: 440px; height: 440px; }
+    .orbit-line.o3 { width: 560px; height: 560px; }
+    .explorer-menu {
+      position: absolute; top: auto; bottom: 220px; left: 12px; right: 12px;
+      transform: none;
+      flex-direction: row;
+      max-width: calc(100vw - 24px);
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-height: none;
+      padding-bottom: 6px;
+    }
+    .x-menu-item { width: 180px; flex-shrink: 0; }
+    .explorer-info { right: 12px; left: 12px; bottom: 18px; width: auto; max-width: none; }
+    .explorer-hud { display: none; }
+  }
+
+  /* ----------- Reduced motion ----------- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .ring, .sun, .satellite { animation: none !important; }
+    .rocket-wrap, .moon, .planet-ringed, .ufo-wrap { animation: none !important; }
+    .asteroid { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="corners-frame">
+  <div class="c tl"></div><div class="c tr"></div>
+  <div class="c bl"></div><div class="c br"></div>
+</div>
+
+<div class="top-bar">
+  <div><span class="dot"></span>SIGNAL · NOMINAL</div>
+</div>
+
+<!-- =================== LANDING =================== -->
+<section id="landing" class="screen" data-screen-label="00 Landing">
+  <div class="landing-header">
+    <h1 class="title">VIBECODING MISSION CONTROL</h1>
+    <div class="subtitle">
+      STUDENT SURVEY 2026 <span class="sep">·</span> N = <span class="n">254</span> <span class="sep">·</span> SELECT YOUR GALAXY TO EXPLORE
+    </div>
+  </div>
+
+  <div class="galaxies">
+    <button class="galaxy-btn" type="button" data-galaxy="purple" aria-label="Enter Experienced Vibecoders galaxy">
+      <div class="orb-wrap orb-purple">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="orb-core"></div>
+        <div class="orb-stars"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><g fill="#fff"><circle cx="20" cy="30" r="0.8"/><circle cx="70" cy="20" r="0.6"/><circle cx="40" cy="60" r="1"/><circle cx="80" cy="70" r="0.7"/><circle cx="55" cy="80" r="0.5"/><circle cx="30" cy="75" r="0.6"/><circle cx="65" cy="45" r="0.9"/></g></svg></div>
+      </div>
+      <div class="galaxy-label">
+        <h3>EXPERIENCED VIBECODERS</h3>
+        <p>Students who have vibecoded before</p>
+        <div class="enter-hint">CLICK TO ENTER →</div>
+      </div>
+    </button>
+
+    <button class="galaxy-btn" type="button" data-galaxy="teal" aria-label="Enter Vibecoding Newcomers galaxy">
+      <div class="orb-wrap orb-teal">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="orb-core"></div>
+        <div class="orb-stars"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><g fill="#fff"><circle cx="25" cy="25" r="0.7"/><circle cx="75" cy="35" r="0.9"/><circle cx="45" cy="55" r="0.6"/><circle cx="60" cy="75" r="1"/><circle cx="20" cy="70" r="0.5"/><circle cx="85" cy="60" r="0.7"/><circle cx="50" cy="40" r="0.5"/></g></svg></div>
+      </div>
+      <div class="galaxy-label">
+        <h3>VIBECODING NEWCOMERS</h3>
+        <p>Students with no vibecoding experience</p>
+        <div class="enter-hint">CLICK TO ENTER →</div>
+      </div>
+    </button>
+
+    <button class="galaxy-btn" type="button" data-galaxy="prompt" aria-label="Enter Prompt Libraries galaxy">
+      <div class="orb-wrap orb-amber">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="orb-core"></div>
+        <div class="orb-stars"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><g fill="#fff"><circle cx="30" cy="20" r="0.9"/><circle cx="70" cy="40" r="0.6"/><circle cx="50" cy="65" r="0.8"/><circle cx="80" cy="75" r="0.5"/><circle cx="25" cy="60" r="0.7"/><circle cx="60" cy="30" r="0.5"/><circle cx="40" cy="80" r="0.6"/></g></svg></div>
+      </div>
+      <div class="galaxy-label">
+        <h3>PROMPT LIBRARIES</h3>
+        <p>Use cases by topic — prompts &amp; criteria</p>
+        <div class="enter-hint">CLICK TO ENTER →</div>
+      </div>
+    </button>
+  </div>
+</section>
+
+<!-- =================== GALAXY: PURPLE =================== -->
+<section id="galaxy-purple" class="screen hidden" data-screen-label="01 Experienced">
+  <div class="scene" data-mode="explorer" data-galaxy-key="purple">
+    <button class="back-btn" type="button" onclick="exitGalaxy()" aria-label="Back to galaxy map">← BACK TO GALAXY MAP</button>
+    <div class="scene-label"><span class="glyph">⬡</span>EXPERIENCED VIBECODERS</div>
+
+    <!-- Explorer mode -->
+    <div class="explorer-stage" id="x-stage-purple">
+      <div class="explorer-floor"></div>
+      <div class="explorer-halo"></div>
+      <div class="explorer-ring"></div>
+      <div class="explorer-ring r2"></div>
+      <div class="explorer-body-wrap"><div class="explorer-body" id="x-body-purple"></div></div>
+      <div class="explorer-dust" id="x-dust-purple"></div>
+      <button class="explorer-next-wrap" id="x-next-purple" type="button">
+        <div class="explorer-next-body" id="x-next-body-purple"></div>
+        <div class="explorer-next-label">NEXT BODY</div>
+        <div class="explorer-next-name" id="x-next-name-purple"></div>
+      </button>
+      <div class="explorer-planet-label" id="x-label-purple">
+        <div class="epl-eyebrow">PLANET</div>
+        <h2 class="epl-name" id="x-label-name-purple"></h2>
+        <p class="epl-blurb" id="x-label-blurb-purple"></p>
+        <button class="epl-cta" id="x-label-cta-purple" type="button">OPEN BRIEFING</button>
+      </div>
+      <div class="explorer-fade"></div>
+    </div>
+
+    <div class="explorer-hud" id="x-hud-purple">
+      <div class="row"><span class="lab">SECTOR</span><span class="val">EXP-01</span></div>
+      <div class="row"><span class="lab">SAMPLE</span><span class="val">N=189</span></div>
+      <div class="row"><span class="lab">UPLINK</span><span class="val">STABLE</span></div>
+    </div>
+
+    <nav class="explorer-menu" id="x-menu-purple" aria-label="Experienced vibecoders topics">
+      <div class="x-menu-eyebrow">SELECT BODY · 06</div>
+    </nav>
+
+    <div class="explorer-info" id="x-info-purple"></div>
+
+    <!-- Orbital map mode (legacy, available via Tweaks) -->
+    <div class="orbit-line o1"></div>
+    <div class="orbit-line o2"></div>
+    <div class="orbit-line o3"></div>
+    <div class="scene-objects">
+      <button class="space-obj" type="button" data-panel="p1" style="left:50%; top:50%;" aria-label="Tool usage">
+        <div class="obj-body"><div class="sun purple" style="width:90px;height:90px;"></div></div>
+        <div class="obj-label">TOOL USAGE</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="p2" style="left:28%; top:38%;" aria-label="Session length">
+        <div class="obj-body"><div class="planet-ringed purple"><div class="ring-outer"></div><div class="body"></div><div class="ring-inner"></div></div></div>
+        <div class="obj-label">SESSION LENGTH</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="p3" style="left:75%; top:30%;" aria-label="Use cases">
+        <div class="obj-body"><div class="rocket-wrap purple">🚀</div></div>
+        <div class="obj-label">USE CASES</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="p4" style="left:78%; top:68%;" aria-label="Tool criteria">
+        <div class="obj-body"><div class="satellite purple"><div class="dish"></div><div class="panel-l"></div><div class="core"></div><div class="panel-r"></div></div></div>
+        <div class="obj-label">TOOL CRITERIA</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="p5" style="left:22%; top:72%;" aria-label="Frustrations">
+        <div class="obj-body"><div class="asteroid"></div></div>
+        <div class="obj-label">FRUSTRATIONS</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="p6" style="left:50%; top:82%;" aria-label="Recommendations">
+        <div class="obj-body"><div class="moon"></div></div>
+        <div class="obj-label">RECOMMENDATIONS</div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- =================== GALAXY: TEAL =================== -->
+<section id="galaxy-teal" class="screen hidden" data-screen-label="02 Newcomers">
+  <div class="scene" data-mode="explorer" data-galaxy-key="teal">
+    <button class="back-btn" type="button" onclick="exitGalaxy()" aria-label="Back to galaxy map">← BACK TO GALAXY MAP</button>
+    <div class="scene-label"><span class="glyph">⬡</span>VIBECODING NEWCOMERS</div>
+
+    <div class="explorer-stage" id="x-stage-teal">
+      <div class="explorer-floor"></div>
+      <div class="explorer-halo"></div>
+      <div class="explorer-ring"></div>
+      <div class="explorer-ring r2"></div>
+      <div class="explorer-body-wrap"><div class="explorer-body" id="x-body-teal"></div></div>
+      <div class="explorer-dust" id="x-dust-teal"></div>
+      <button class="explorer-next-wrap" id="x-next-teal" type="button">
+        <div class="explorer-next-body" id="x-next-body-teal"></div>
+        <div class="explorer-next-label">NEXT BODY</div>
+        <div class="explorer-next-name" id="x-next-name-teal"></div>
+      </button>
+      <div class="explorer-planet-label" id="x-label-teal">
+        <div class="epl-eyebrow">PLANET</div>
+        <h2 class="epl-name" id="x-label-name-teal"></h2>
+        <p class="epl-blurb" id="x-label-blurb-teal"></p>
+        <button class="epl-cta" id="x-label-cta-teal" type="button">OPEN BRIEFING</button>
+      </div>
+      <div class="explorer-fade"></div>
+    </div>
+
+    <div class="explorer-hud" id="x-hud-teal">
+      <div class="row"><span class="lab">SECTOR</span><span class="val">NEW-02</span></div>
+      <div class="row"><span class="lab">SAMPLE</span><span class="val">N=65</span></div>
+      <div class="row"><span class="lab">UPLINK</span><span class="val">STABLE</span></div>
+    </div>
+
+    <nav class="explorer-menu" id="x-menu-teal" aria-label="Newcomers topics">
+      <div class="x-menu-eyebrow">SELECT BODY · 05</div>
+    </nav>
+
+    <div class="explorer-info" id="x-info-teal"></div>
+
+    <div class="orbit-line o1"></div>
+    <div class="orbit-line o2"></div>
+    <div class="orbit-line o3"></div>
+    <div class="scene-objects">
+      <button class="space-obj" type="button" data-panel="t1" style="left:50%; top:50%;" aria-label="Tool awareness">
+        <div class="obj-body"><div class="sun teal" style="width:90px;height:90px;"></div></div>
+        <div class="obj-label">TOOL AWARENESS</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="t2" style="left:24%; top:34%;" aria-label="Barriers">
+        <div class="obj-body"><div class="planet-ringed teal"><div class="ring-outer"></div><div class="body"></div><div class="ring-inner"></div></div></div>
+        <div class="obj-label">BARRIERS</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="t3" style="left:78%; top:32%;" aria-label="Tool wishlist">
+        <div class="obj-body"><div class="rocket-wrap teal">🚀</div></div>
+        <div class="obj-label">TOOL WISHLIST</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="t4" style="left:24%; top:74%;" aria-label="Accessibility">
+        <div class="obj-body"><div class="satellite teal"><div class="dish"></div><div class="panel-l"></div><div class="core"></div><div class="panel-r"></div></div></div>
+        <div class="obj-label">ACCESSIBILITY</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="t5" style="left:78%; top:74%;" aria-label="App wishlist">
+        <div class="obj-body"><div class="ufo-wrap">🛸</div></div>
+        <div class="obj-label">APP WISHLIST</div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- =================== GALAXY: PROMPT =================== -->
+<section id="galaxy-prompt" class="screen hidden" data-screen-label="03 Prompt Libraries">
+  <div class="scene" data-mode="explorer" data-galaxy-key="prompt">
+    <button class="back-btn" type="button" onclick="exitGalaxy()" aria-label="Back to galaxy map">← BACK TO GALAXY MAP</button>
+    <div class="scene-label"><span class="glyph">⬡</span>PROMPT LIBRARIES</div>
+
+    <div class="explorer-stage" id="x-stage-prompt">
+      <div class="explorer-floor"></div>
+      <div class="explorer-halo"></div>
+      <div class="explorer-ring"></div>
+      <div class="explorer-ring r2"></div>
+      <div class="explorer-body-wrap"><div class="explorer-body" id="x-body-prompt"></div></div>
+      <div class="explorer-dust" id="x-dust-prompt"></div>
+      <button class="explorer-next-wrap" id="x-next-prompt" type="button">
+        <div class="explorer-next-body" id="x-next-body-prompt"></div>
+        <div class="explorer-next-label">NEXT BODY</div>
+        <div class="explorer-next-name" id="x-next-name-prompt"></div>
+      </button>
+      <div class="explorer-planet-label" id="x-label-prompt">
+        <div class="epl-eyebrow">PLANET</div>
+        <h2 class="epl-name" id="x-label-name-prompt"></h2>
+        <p class="epl-blurb" id="x-label-blurb-prompt"></p>
+        <button class="epl-cta" id="x-label-cta-prompt" type="button">OPEN BRIEFING</button>
+      </div>
+      <div class="explorer-fade"></div>
+    </div>
+
+    <div class="explorer-hud" id="x-hud-prompt">
+      <div class="row"><span class="lab">SECTOR</span><span class="val">LIB-03</span></div>
+      <div class="row"><span class="lab">CATALOG</span><span class="val">06 BODIES</span></div>
+      <div class="row"><span class="lab">UPLINK</span><span class="val">STABLE</span></div>
+    </div>
+
+    <nav class="explorer-menu" id="x-menu-prompt" aria-label="Prompt library categories">
+      <div class="x-menu-eyebrow">SELECT BODY · 06</div>
+    </nav>
+
+    <div class="explorer-info" id="x-info-prompt"></div>
+
+    <div class="orbit-line o1"></div>
+    <div class="orbit-line o2"></div>
+    <div class="orbit-line o3"></div>
+    <div class="scene-objects">
+      <button class="space-obj" type="button" data-panel="pl2" style="left:50%; top:50%;" aria-label="Productivity">
+        <div class="obj-body"><div class="sun amber" style="width:90px;height:90px;"></div></div>
+        <div class="obj-label">PRODUCTIVITY</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="pl1" style="left:24%; top:30%;" aria-label="Creative and Social">
+        <div class="obj-body"><div class="rocket-wrap amber">🚀</div></div>
+        <div class="obj-label">CREATIVE &amp; SOCIAL</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="pl3" style="left:76%; top:28%;" aria-label="Academic">
+        <div class="obj-body"><div class="planet-ringed amber"><div class="ring-outer"></div><div class="body"></div><div class="ring-inner"></div></div></div>
+        <div class="obj-label">ACADEMIC</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="pl4" style="left:80%; top:72%;" aria-label="Web and Data">
+        <div class="obj-body"><div class="satellite amber"><div class="dish"></div><div class="panel-l"></div><div class="core"></div><div class="panel-r"></div></div></div>
+        <div class="obj-label">WEB &amp; DATA</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="pl5" style="left:20%; top:74%;" aria-label="Finance">
+        <div class="obj-body"><div class="asteroid"></div></div>
+        <div class="obj-label">FINANCE</div>
+      </button>
+      <button class="space-obj" type="button" data-panel="pl6" style="left:50%; top:84%;" aria-label="Health">
+        <div class="obj-body"><div class="moon"></div></div>
+        <div class="obj-label">HEALTH</div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- =================== PANEL =================== -->
+<aside id="panel" role="dialog" aria-modal="false" aria-labelledby="panel-title-el">
+  <div class="panel-header">
+    <span class="panel-tag" id="panel-tag">DETAIL</span>
+    <button class="close-btn" type="button" aria-label="Close panel" onclick="closePanel()">×</button>
+  </div>
+
+  <div class="panel-body">
+    <!-- Survey mode -->
+    <div class="survey-mode" id="survey-mode">
+      <h2 class="panel-title" id="panel-title-el">Title</h2>
+      <div class="stat-headline" id="stat-headline">Stat</div>
+      <p class="panel-desc" id="panel-desc">Description</p>
+      <div class="section-label">DISTRIBUTION</div>
+      <div class="bars" id="bars"></div>
+      <div class="tags" id="tags"></div>
+    </div>
+
+    <!-- Prompt library mode -->
+    <div class="prompt-mode" id="prompt-mode">
+      <span class="placeholder-tag">Placeholder Library</span>
+      <h2 class="panel-title" id="pl-title-el">Title</h2>
+      <div class="stat-headline" id="pl-stat-el">Stat</div>
+      <p class="panel-desc" id="pl-desc-el">Description</p>
+
+      <div class="section-label">SELECT USE CASE</div>
+      <select class="use-case-select" id="use-case-select" aria-label="Choose a use case"></select>
+
+      <div class="section-divider"></div>
+
+      <div class="tab-bar" id="tab-bar" role="tablist" aria-label="Prompt sections"></div>
+
+      <div class="tab-content" id="tab-content"></div>
+    </div>
+  </div>
+</aside>
+
+<script>
+// ============= STARFIELD =============
+(function () {
+  const c = document.getElementById('stars');
+  const ctx = c.getContext('2d');
+  let stars = [];
+  let raf = null;
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    const count = Math.max(180, Math.floor((c.width * c.height) / 5000));
+    const cap = Math.min(300, count);
+    stars = [];
+    for (let i = 0; i < cap; i++) {
+      stars.push({
+        x: Math.random() * c.width,
+        y: Math.random() * c.height,
+        r: Math.random() * 1.2 + 0.2,
+        a: Math.random() * 0.8 + 0.2,
+        speed: Math.random() * 0.015 + 0.003,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  function frame(t) {
+    ctx.clearRect(0, 0, c.width, c.height);
+    for (const s of stars) {
+      const tw = REDUCED ? s.a : (Math.sin(t * s.speed + s.phase) * 0.4 + 0.6) * s.a;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(226, 232, 240, ${tw})`;
+      ctx.fill();
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  if (REDUCED) {
+    // single static draw
+    ctx.clearRect(0, 0, c.width, c.height);
+    for (const s of stars) {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(226, 232, 240, ${s.a})`;
+      ctx.fill();
+    }
+  } else {
+    raf = requestAnimationFrame(frame);
+  }
+})();
+
+// ============= DATA =============
+const PURPLE = '#a78bfa';
+const PURPLE_DEEP = '#7c3aed';
+const PURPLE_LIGHT = '#c4b5fd';
+const PURPLE_FADED = '#8b5cf6';
+const TEAL = '#2dd4bf';
+const TEAL_DEEP = '#0d9488';
+const TEAL_LIGHT = '#5eead4';
+const TEAL_FADED = '#14b8a6';
+const AMBER = '#fbbf24';
+const AMBER_DEEP = '#f59e0b';
+
+const panels = {
+  // ============ EXPERIENCED ============
+  p1: {
+    title: "Which Tools Do Experienced Users Actually Use?",
+    stat: "ChatGPT used by 63%",
+    statColor: PURPLE_LIGHT,
+    desc: "ChatGPT/Codex leads daily usage, with Claude and Gemini close behind. Cursor sees disproportionate adoption among the most advanced students.",
+    bars: [
+      { label: "ChatGPT / Codex", pct: 63, color: PURPLE_LIGHT },
+      { label: "Claude", pct: 49.6, color: PURPLE },
+      { label: "Gemini", pct: 47.2, color: PURPLE_FADED },
+      { label: "Cursor", pct: 21.7, color: PURPLE_DEEP },
+      { label: "GitHub Copilot", pct: 17.3, color: '#6d28d9' },
+      { label: "Lovable", pct: 15.7, color: '#5b21b6' }
+    ],
+    tags: ["ChatGPT = most used", "Claude strong #2", "Cursor favored by advanced users"],
+    tagColor: 'rgba(124,58,237,0.12)',
+    tagText: PURPLE_LIGHT,
+    border: PURPLE_DEEP
+  },
+  p2: {
+    title: "How Long Are Vibecoding Sessions?",
+    stat: "Most sessions last 1–2 hours",
+    statColor: PURPLE_LIGHT,
+    desc: "The modal session is a focused 1–2 hour sprint. A meaningful tail of users push past four hours, suggesting deep flow states are real.",
+    bars: [
+      { label: "Less than 1h", pct: 28, color: PURPLE_LIGHT },
+      { label: "1–2 hours", pct: 38, color: PURPLE },
+      { label: "2–4 hours", pct: 20, color: PURPLE_FADED },
+      { label: "4–6 hours", pct: 10, color: PURPLE_DEEP },
+      { label: "6+ hours", pct: 4, color: '#5b21b6' }
+    ],
+    tags: ["Modal: 1–2h", "Long-tail: 4h+", "Flow over fragments"],
+    tagColor: 'rgba(124,58,237,0.12)',
+    tagText: PURPLE_LIGHT,
+    border: PURPLE_DEEP
+  },
+  p3: {
+    title: "What Tasks Do Students Use Vibecoding For?",
+    stat: "Personal projects dominate",
+    statColor: PURPLE_LIGHT,
+    desc: "Students reach for AI-assisted coding most often for their own product ideas. School and workflow automation follow — and full web apps are increasingly within reach.",
+    bars: [
+      { label: "Personal / product ideas", pct: 68, color: PURPLE_LIGHT },
+      { label: "School", pct: 45, color: PURPLE },
+      { label: "Automating workflows", pct: 38, color: PURPLE_FADED },
+      { label: "UI components", pct: 35, color: PURPLE_DEEP },
+      { label: "Full web apps", pct: 28, color: '#6d28d9' },
+      { label: "Work", pct: 22, color: '#5b21b6' }
+    ],
+    tags: ["Personal projects #1", "School in second", "Full apps growing"],
+    tagColor: 'rgba(124,58,237,0.12)',
+    tagText: PURPLE_LIGHT,
+    border: PURPLE_DEEP
+  },
+  p4: {
+    title: "What Do Experienced Users Look For in a Tool?",
+    stat: "Quality code generation #1",
+    statColor: PURPLE_LIGHT,
+    desc: "Code quality wins overall, but the gap is narrow. Speed, debugging, UI/UX and editability are all close — these users want a well-rounded craftsman, not a one-trick pony.",
+    bars: [
+      { label: "Quality code generation", pct: 54, color: PURPLE_LIGHT },
+      { label: "Fast prototyping", pct: 48, color: PURPLE },
+      { label: "Debugging help", pct: 44, color: PURPLE_FADED },
+      { label: "UI / UX quality", pct: 41, color: PURPLE_DEEP },
+      { label: "Edit & control", pct: 38, color: '#6d28d9' },
+      { label: "Low cost", pct: 35, color: '#5b21b6' }
+    ],
+    tags: ["Quality > speed", "Debugging matters", "Want craft + control"],
+    tagColor: 'rgba(124,58,237,0.12)',
+    tagText: PURPLE_LIGHT,
+    border: PURPLE_DEEP
+  },
+  p5: {
+    title: "What Frustrates Experienced Vibecoders?",
+    stat: "Debugging is the #1 pain",
+    statColor: PURPLE_LIGHT,
+    desc: "Bad output and debugging dominate the frustration list. When tools ignore instructions or generate generic UI, trust erodes fast.",
+    bars: [
+      { label: "Debugging / bad code", pct: 44, color: PURPLE_LIGHT },
+      { label: "Ignores instructions", pct: 31, color: PURPLE },
+      { label: "Generic UI output", pct: 24, color: PURPLE_FADED },
+      { label: "Prompt wording", pct: 19, color: PURPLE_DEEP },
+      { label: "Token / context limits", pct: 14, color: '#6d28d9' }
+    ],
+    tags: ["Debugging is #1", "Trust = obedience", "UI feels copy-paste"],
+    tagColor: 'rgba(124,58,237,0.12)',
+    tagText: PURPLE_LIGHT,
+    border: PURPLE_DEEP
+  },
+  p6: {
+    title: "What Tools Do Experienced Users Recommend?",
+    stat: "Claude & ChatGPT top picks",
+    statColor: PURPLE_LIGHT,
+    desc: "When asked who they would recommend to a friend, Claude noses ahead of ChatGPT. Lovable, Cursor and Gemini round out a competitive second tier.",
+    bars: [
+      { label: "Claude", pct: 52, color: PURPLE_LIGHT },
+      { label: "ChatGPT / Codex", pct: 48, color: PURPLE },
+      { label: "Lovable", pct: 22, color: PURPLE_FADED },
+      { label: "Cursor", pct: 20, color: PURPLE_DEEP },
+      { label: "Gemini", pct: 18, color: '#6d28d9' },
+      { label: "Bolt.new", pct: 10, color: '#5b21b6' }
+    ],
+    tags: ["Claude #1 recommended", "Tight race at the top", "Long-tail of niche picks"],
+    tagColor: 'rgba(124,58,237,0.12)',
+    tagText: PURPLE_LIGHT,
+    border: PURPLE_DEEP
+  },
+
+  // ============ NEWCOMERS ============
+  t1: {
+    title: "Which Tools Have Newcomers Heard Of?",
+    stat: "88% know ChatGPT",
+    statColor: TEAL_LIGHT,
+    desc: "Awareness skews heavily to general-purpose chat tools. Coding-specific products like Lovable and Bolt.new barely register with non-vibecoders yet.",
+    bars: [
+      { label: "ChatGPT / Codex", pct: 88, color: TEAL_LIGHT },
+      { label: "Gemini", pct: 84, color: TEAL },
+      { label: "Claude", pct: 74, color: TEAL_FADED },
+      { label: "Copilot", pct: 50, color: TEAL_DEEP },
+      { label: "Lovable", pct: 20, color: '#0f766e' },
+      { label: "Bolt.new", pct: 12, color: '#115e59' }
+    ],
+    tags: ["Chat-first awareness", "Coding tools = unknown", "Discovery gap"],
+    tagColor: 'rgba(13,148,136,0.12)',
+    tagText: TEAL_LIGHT,
+    border: TEAL_DEEP
+  },
+  t2: {
+    title: "What Stops Newcomers From Starting?",
+    stat: "61% don't see the value yet",
+    statColor: TEAL_LIGHT,
+    desc: "Most non-users haven't encountered a problem they think AI coding solves. Time and difficulty matter — but the bigger gap is showing the payoff.",
+    bars: [
+      { label: "Don't see usefulness", pct: 61, color: TEAL_LIGHT },
+      { label: "Unclear value", pct: 41, color: TEAL },
+      { label: "No time", pct: 22, color: TEAL_FADED },
+      { label: "Learning barrier", pct: 18, color: TEAL_DEEP },
+      { label: "Too difficult", pct: 17, color: '#0f766e' }
+    ],
+    tags: ["Value gap > skill gap", "Show, don't tell", "Lead with outcomes"],
+    tagColor: 'rgba(13,148,136,0.12)',
+    tagText: TEAL_LIGHT,
+    border: TEAL_DEEP
+  },
+  t3: {
+    title: "What Would Newcomers Want in a Vibecoding Tool?",
+    stat: "Free access is the #1 ask",
+    statColor: TEAL_LIGHT,
+    desc: "Free, beginner-friendly, and good code — in that order. Newcomers want to try without commitment and produce something real on the first try.",
+    bars: [
+      { label: "Free access", pct: 59, color: TEAL_LIGHT },
+      { label: "Beginner UI / UX", pct: 58, color: TEAL },
+      { label: "Quality code", pct: 54, color: TEAL_FADED },
+      { label: "Edit & control", pct: 47, color: TEAL_DEEP }
+    ],
+    tags: ["Price is a wall", "Onboarding matters", "Real output > demos"],
+    tagColor: 'rgba(13,148,136,0.12)',
+    tagText: TEAL_LIGHT,
+    border: TEAL_DEEP
+  },
+  t4: {
+    title: "What Would Make Vibecoding More Accessible?",
+    stat: "Tutorials are the #1 request",
+    statColor: TEAL_LIGHT,
+    desc: "Newcomers don't want a manual — they want a guide. Walk-throughs, classroom intros, and visible peer projects do more than feature lists.",
+    bars: [
+      { label: "Tutorials", pct: 52, color: TEAL_LIGHT },
+      { label: "Peer / class intro", pct: 34, color: TEAL },
+      { label: "Free tools", pct: 28, color: TEAL_FADED },
+      { label: "Simpler UI", pct: 24, color: TEAL_DEEP },
+      { label: "Real demos", pct: 20, color: '#0f766e' }
+    ],
+    tags: ["Teach, don't ship docs", "Peers > marketing", "Demo over describe"],
+    tagColor: 'rgba(13,148,136,0.12)',
+    tagText: TEAL_LIGHT,
+    border: TEAL_DEEP
+  },
+  t5: {
+    title: "What Apps Would Newcomers Want Built?",
+    stat: "Productivity & finance top wishlist",
+    statColor: TEAL_LIGHT,
+    desc: "When asked what they'd build first, newcomers pick everyday utility — productivity, finance, health. Useful, not novel, is the bar.",
+    bars: [
+      { label: "Productivity", pct: 38, color: TEAL_LIGHT },
+      { label: "Finance", pct: 29, color: TEAL },
+      { label: "Health / habit", pct: 22, color: TEAL_FADED },
+      { label: "Food", pct: 14, color: TEAL_DEEP },
+      { label: "AI assistant", pct: 11, color: '#0f766e' }
+    ],
+    tags: ["Utility wins", "Build for daily life", "Habit > novelty"],
+    tagColor: 'rgba(13,148,136,0.12)',
+    tagText: TEAL_LIGHT,
+    border: TEAL_DEEP
+  }
+};
+
+// ============ PROMPT LIBRARY ============
+function makeUseCase(label) {
+  return {
+    label,
+    polishedPrompt: "[Placeholder] Polished prompt body. Replace this with the final, well-scoped prompt copy that demonstrates how a thoughtful student would phrase the request — including context, constraints, and desired output format.",
+    idealResponse: "[Placeholder] Ideal response. Replace this with the canonical model output we would consider exemplary for this use case — including structure, tone, and the key facts/sections it should hit.",
+    criteria: [
+      "[Placeholder] Criterion text.",
+      "[Placeholder] Criterion text.",
+      "[Placeholder] Criterion text.",
+      "[Placeholder] Criterion text."
+    ],
+    badResponse: {
+      text: "[Placeholder] Bad response. Replace with a representative weak output that misses the criteria above so reviewers can see the contrast.",
+      failsAt: [
+        "[Placeholder] Criterion text.",
+        "[Placeholder] Criterion text.",
+        "[Placeholder] Criterion text."
+      ]
+    }
+  };
+}
+
+const promptLibraries = {
+  pl1: {
+    kind: "promptLibrary",
+    categoryTitle: "Creative & Social",
+    stat: "Storytelling, social copy, content drafts",
+    statColor: AMBER,
+    desc: "Prompts that help students draft, remix, and polish creative work — captions, scripts, story beats, and short-form social posts.",
+    border: AMBER_DEEP,
+    useCases: [
+      makeUseCase("Short-form social caption"),
+      makeUseCase("Story outline for a short film")
+    ]
+  },
+  pl2: {
+    kind: "promptLibrary",
+    categoryTitle: "Productivity",
+    stat: "Plans, schedules, structured to-dos",
+    statColor: AMBER,
+    desc: "Prompts that turn fuzzy goals into concrete, time-boxed plans — daily routines, weekly reviews, and meeting prep.",
+    border: AMBER_DEEP,
+    useCases: [
+      makeUseCase("Weekly study schedule"),
+      makeUseCase("Meeting agenda from rough notes")
+    ]
+  },
+  pl3: {
+    kind: "promptLibrary",
+    categoryTitle: "Academic",
+    stat: "Research, essays, exam prep",
+    statColor: AMBER,
+    desc: "Prompts for academic work — thesis statements, structured arguments, source synthesis, and study-guide generation.",
+    border: AMBER_DEEP,
+    useCases: [
+      makeUseCase("Argumentative essay outline"),
+      makeUseCase("Exam study guide from lecture notes")
+    ]
+  },
+  pl4: {
+    kind: "promptLibrary",
+    categoryTitle: "Web & Data",
+    stat: "Components, queries, light analysis",
+    statColor: AMBER,
+    desc: "Prompts focused on shipping web work and pulling insight from data — UI components, SQL/queries, and quick exploratory analysis.",
+    border: AMBER_DEEP,
+    useCases: [
+      makeUseCase("Build a responsive landing section"),
+      makeUseCase("Summarize a CSV into key findings")
+    ]
+  },
+  pl5: {
+    kind: "promptLibrary",
+    categoryTitle: "Finance",
+    stat: "Budgets, calculators, tracking",
+    statColor: AMBER,
+    desc: "Prompts that help students reason about money — building budgets, comparing plans, and modeling small financial decisions.",
+    border: AMBER_DEEP,
+    useCases: [
+      makeUseCase("Personal monthly budget"),
+      makeUseCase("Subscription audit & cuts")
+    ]
+  },
+  pl6: {
+    kind: "promptLibrary",
+    categoryTitle: "Health",
+    stat: "Habits, fitness, wellbeing",
+    statColor: AMBER,
+    desc: "Prompts oriented around healthy routines — workout structures, sleep hygiene, and habit-tracking scaffolds.",
+    border: AMBER_DEEP,
+    useCases: [
+      makeUseCase("Beginner 4-week fitness plan"),
+      makeUseCase("Sleep hygiene reset checklist")
+    ]
+  }
+};
+
+// merge into one panels object lookup
+Object.assign(panels, promptLibraries);
+
+// ============= ROUTING =============
+const GALAXY_SCREEN_IDS = { purple: 'galaxy-purple', teal: 'galaxy-teal', prompt: 'galaxy-prompt' };
+let currentScreen = 'landing';
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    if (s.id === id) {
+      s.classList.remove('hidden');
+      s.classList.remove('zoom-in');
+    } else {
+      s.classList.add('hidden');
+    }
+  });
+  currentScreen = id;
+  document.body.classList.toggle('in-galaxy', id !== 'landing');
+}
+
+function enterGalaxy(key) {
+  const id = GALAXY_SCREEN_IDS[key];
+  if (!id) return;
+  // animate landing out
+  const landing = document.getElementById('landing');
+  landing.classList.add('zoom-in');
+  setTimeout(() => {
+    showScreen(id);
+  }, 280);
+}
+
+function exitGalaxy() {
+  closePanel();
+  const cur = document.getElementById(currentScreen);
+  if (cur && cur.id !== 'landing') {
+    cur.classList.add('hidden');
+  }
+  setTimeout(() => {
+    showScreen('landing');
+  }, 50);
+}
+
+// ============= PANEL =============
+const panel = document.getElementById('panel');
+const surveyMode = document.getElementById('survey-mode');
+const promptModeEl = document.getElementById('prompt-mode');
+
+let promptUiState = { panelId: null, useCaseIndex: 0, tabIndex: 0 };
+const TAB_LABELS = ['Polished prompt', 'Ideal response', 'Criteria', 'Bad example'];
+
+function setPanelMode(mode) {
+  if (mode === 'promptLibrary') {
+    surveyMode.classList.add('hidden');
+    promptModeEl.classList.add('active');
+  } else {
+    surveyMode.classList.remove('hidden');
+    promptModeEl.classList.remove('active');
+  }
+}
+
+function openPanel(id) {
+  const data = panels[id];
+  if (!data) return;
+
+  // Set border + tag
+  panel.style.borderLeftColor = data.border;
+  const tag = document.getElementById('panel-tag');
+
+  if (data.kind === 'promptLibrary') {
+    tag.textContent = 'PROMPT LIBRARY';
+    setPanelMode('promptLibrary');
+    renderPromptLibrary(id, data);
+  } else {
+    tag.textContent = 'SURVEY DETAIL';
+    setPanelMode('survey');
+    renderSurvey(data);
+  }
+
+  panel.classList.add('open');
+
+  // #region agent log panel-open metrics
+  try {
+    const stage = document.querySelector('.scene:not(.hidden) .explorer-stage');
+    const scene = stage ? stage.closest('.scene') : null;
+    const stageRect = stage ? stage.getBoundingClientRect() : null;
+    const stageOverflow = stage ? getComputedStyle(stage).overflow : null;
+    const sceneOverflow = scene ? getComputedStyle(scene).overflow : null;
+    const probeX = stageRect ? (stageRect.left + stageRect.width * 0.5) : (window.innerWidth * 0.5);
+    const probeY = stageRect ? (stageRect.top + 12) : 12;
+    const elAtProbe = document.elementFromPoint(probeX, probeY);
+    fetch('http://127.0.0.1:7597/ingest/a5c5804b-c2aa-4fb1-aafc-edf5485fb9bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'680df7'},body:JSON.stringify({sessionId:'680df7',runId:'pre-fix',hypothesisId:'B',location:'index.html:openPanel',message:'panel opened; probe element near stage top',data:{panelId:id,stageOverflow,sceneOverflow,probeY,probeElClass:elAtProbe?(elAtProbe.className||elAtProbe.id||elAtProbe.tagName):null},timestamp:Date.now()})}).catch(()=>{});
+  } catch (e) {}
+  // #endregion
+
+  // animate bars after opening
+  if (data.kind !== 'promptLibrary') {
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        panel.querySelectorAll('.bar-fill').forEach(b => {
+          const pct = parseFloat(b.getAttribute('data-pct')) || 0;
+          b.style.transform = 'scaleX(' + (pct / 100) + ')';
+        });
+      }, 120);
+    });
+  }
+}
+
+function closePanel() {
+  panel.classList.remove('open');
+  // reset bars so next open re-animates
+  setTimeout(() => {
+    panel.querySelectorAll('.bar-fill').forEach(b => { b.style.transform = 'scaleX(0)'; });
+  }, 350);
+}
+
+function renderSurvey(data) {
+  document.getElementById('panel-title-el').textContent = data.title;
+  const stat = document.getElementById('stat-headline');
+  stat.textContent = data.stat;
+  stat.style.color = data.statColor;
+  document.getElementById('panel-desc').textContent = data.desc;
+
+  const bars = document.getElementById('bars');
+  bars.replaceChildren();
+  data.bars.forEach(b => {
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    const meta = document.createElement('div');
+    meta.className = 'bar-meta';
+    const lab = document.createElement('span');
+    lab.className = 'bar-label';
+    lab.textContent = b.label;
+    const pct = document.createElement('span');
+    pct.className = 'bar-pct';
+    pct.textContent = b.pct + '%';
+    meta.appendChild(lab); meta.appendChild(pct);
+    const track = document.createElement('div');
+    track.className = 'bar-track';
+    const fill = document.createElement('div');
+    fill.className = 'bar-fill';
+    fill.style.background = b.color;
+    fill.style.boxShadow = `0 0 8px ${b.color}`;
+    fill.setAttribute('data-pct', String(b.pct));
+    track.appendChild(fill);
+    row.appendChild(meta); row.appendChild(track);
+    bars.appendChild(row);
+  });
+
+  const tags = document.getElementById('tags');
+  tags.replaceChildren();
+  data.tags.forEach(t => {
+    const tg = document.createElement('span');
+    tg.className = 'tag';
+    tg.textContent = t;
+    tg.style.background = data.tagColor;
+    tg.style.color = data.tagText;
+    tg.style.borderColor = data.tagText;
+    tags.appendChild(tg);
+  });
+}
+
+function renderPromptLibrary(panelId, data) {
+  // reset state if new panel
+  if (promptUiState.panelId !== panelId) {
+    promptUiState = { panelId, useCaseIndex: 0, tabIndex: 0 };
+  }
+
+  document.getElementById('pl-title-el').textContent = data.categoryTitle;
+  const stat = document.getElementById('pl-stat-el');
+  stat.textContent = data.stat;
+  stat.style.color = data.statColor;
+  document.getElementById('pl-desc-el').textContent = data.desc;
+
+  // Build select
+  const sel = document.getElementById('use-case-select');
+  sel.replaceChildren();
+  data.useCases.forEach((uc, i) => {
+    const opt = document.createElement('option');
+    opt.value = String(i);
+    opt.textContent = uc.label;
+    sel.appendChild(opt);
+  });
+  sel.value = String(promptUiState.useCaseIndex);
+  sel.onchange = () => {
+    promptUiState.useCaseIndex = parseInt(sel.value, 10) || 0;
+    promptUiState.tabIndex = 0;
+    renderTabs();
+    renderTabContent();
+  };
+
+  // Build tabs
+  renderTabs();
+  renderTabContent();
+}
+
+function renderTabs() {
+  const bar = document.getElementById('tab-bar');
+  bar.replaceChildren();
+  TAB_LABELS.forEach((label, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tab';
+    b.setAttribute('role', 'tab');
+    const selected = (i === promptUiState.tabIndex);
+    b.setAttribute('aria-selected', selected ? 'true' : 'false');
+    b.tabIndex = selected ? 0 : -1;
+    b.textContent = label;
+    b.onclick = () => {
+      promptUiState.tabIndex = i;
+      renderTabs();
+      renderTabContent();
+    };
+    bar.appendChild(b);
+  });
+}
+
+function renderTabContent() {
+  const data = panels[promptUiState.panelId];
+  if (!data) return;
+  const uc = data.useCases[promptUiState.useCaseIndex];
+  const out = document.getElementById('tab-content');
+  out.replaceChildren();
+
+  const tag = document.createElement('span');
+  tag.className = 'placeholder-tag';
+  tag.textContent = 'Placeholder';
+  out.appendChild(tag);
+
+  const idx = promptUiState.tabIndex;
+  if (idx === 0) {
+    const block = document.createElement('div');
+    block.className = 'code-block';
+    block.textContent = uc.polishedPrompt;
+    out.appendChild(block);
+  } else if (idx === 1) {
+    const block = document.createElement('div');
+    block.className = 'code-block';
+    block.textContent = uc.idealResponse;
+    out.appendChild(block);
+  } else if (idx === 2) {
+    const ul = document.createElement('ul');
+    ul.className = 'criteria-list';
+    uc.criteria.forEach(c => {
+      const li = document.createElement('li');
+      li.textContent = c;
+      ul.appendChild(li);
+    });
+    out.appendChild(ul);
+  } else if (idx === 3) {
+    const box = document.createElement('div');
+    box.className = 'bad-box';
+    box.textContent = uc.badResponse.text;
+    out.appendChild(box);
+    const lab = document.createElement('div');
+    lab.className = 'fails-label';
+    lab.textContent = 'Fails at:';
+    out.appendChild(lab);
+    const ul = document.createElement('ul');
+    ul.className = 'fails-list';
+    uc.badResponse.failsAt.forEach(f => {
+      const li = document.createElement('li');
+      li.textContent = f;
+      ul.appendChild(li);
+    });
+    out.appendChild(ul);
+  }
+}
+
+// ============= EVENT WIRING =============
+document.querySelectorAll('.galaxy-btn').forEach(btn => {
+  const k = btn.getAttribute('data-galaxy');
+  btn.setAttribute('role', 'button');
+  btn.setAttribute('tabindex', '0');
+  btn.addEventListener('click', () => enterGalaxy(k));
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterGalaxy(k); }
+  });
+});
+
+document.querySelectorAll('.space-obj').forEach(obj => {
+  const id = obj.getAttribute('data-panel');
+  obj.setAttribute('role', 'button');
+  obj.setAttribute('tabindex', '0');
+  obj.addEventListener('click', (e) => { e.stopPropagation(); openPanel(id); });
+  obj.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPanel(id); }
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (panel.classList.contains('open')) {
+      closePanel();
+    }
+  }
+});
+
+// expose
+window.enterGalaxy = enterGalaxy;
+window.exitGalaxy = exitGalaxy;
+window.openPanel = openPanel;
+window.closePanel = closePanel;
+
+// ============= EXPLORER MODE =============
+// Per-topic visual + descriptive metadata (one entry per panel id that appears in a galaxy)
+const EXPLORER = {
+  // ---- Experienced (purple family) ----
+  p1: { name: "TOOL USAGE",        meta: "SOL · STAR",          body: "TOOL USAGE",       planet: "sun",       stat: "ChatGPT used by 63%",        blurb: "ChatGPT/Codex leads daily usage, with Claude and Gemini close behind. Cursor sees disproportionate adoption among the most advanced students.",
+        accent: "#fbbf24", glow: "rgba(251,191,36,0.55)", ring: false },
+  p2: { name: "SESSION LENGTH",    meta: "SATURN · GAS GIANT",  body: "SESSION LENGTH",    planet: "saturn",    stat: "Most sessions 1–2h",         blurb: "The modal session is a focused 1–2 hour sprint. A meaningful tail of users push past four hours, suggesting deep flow states are real.",
+        accent: "#f3d28b", glow: "rgba(243,210,139,0.5)", ring: true },
+  p3: { name: "USE CASES",         meta: "EARTH · TERRESTRIAL", body: "USE CASES",     planet: "earth",     stat: "Personal projects dominate", blurb: "Students reach for AI-assisted coding most often for their own product ideas. School and workflow automation follow — and full web apps are increasingly within reach.",
+        accent: "#38bdf8", glow: "rgba(56,189,248,0.5)", ring: false },
+  p4: { name: "TOOL CRITERIA",     meta: "MARS · TERRESTRIAL",  body: "TOOL CRITERIA",      planet: "mars",      stat: "Quality code generation #1", blurb: "Code quality wins overall, but the gap is narrow. Speed, debugging, UI/UX and editability are all close — these users want a well-rounded craftsman.",
+        accent: "#fb923c", glow: "rgba(251,146,60,0.5)", ring: false },
+  p5: { name: "FRUSTRATIONS",      meta: "JUPITER · GAS GIANT", body: "FRUSTRATIONS",   planet: "jupiter",   stat: "Debugging is the #1 pain",   blurb: "Bad output and debugging dominate the frustration list. When tools ignore instructions or generate generic UI, trust erodes fast.",
+        accent: "#fde68a", glow: "rgba(253,230,138,0.5)", ring: false },
+  p6: { name: "RECOMMENDATIONS",   meta: "VENUS · TERRESTRIAL", body: "RECOMMENDATIONS",     planet: "venus",     stat: "Claude & ChatGPT top picks", blurb: "When asked who they would recommend to a friend, Claude noses ahead of ChatGPT. Lovable, Cursor and Gemini round out a competitive second tier.",
+        accent: "#fcd34d", glow: "rgba(252,211,77,0.5)", ring: false },
+
+  // ---- Newcomers (Sol-system: outer planets + icy moons) ----
+  t1: { name: "TOOL AWARENESS",    meta: "NEPTUNE · ICE GIANT", body: "TOOL AWARENESS",   planet: "neptune",   stat: "88% know ChatGPT",           blurb: "Awareness skews heavily to general-purpose chat tools. Coding-specific products like Lovable and Bolt.new barely register with non-vibecoders yet.",
+        accent: "#3b82f6", glow: "rgba(59,130,246,0.5)", ring: false },
+  t2: { name: "BARRIERS",          meta: "URANUS · ICE GIANT",  body: "BARRIERS",    planet: "uranus",    stat: "61% don't see value",        blurb: "Most non-users haven't encountered a problem they think AI coding solves. Time and difficulty matter — but the bigger gap is showing the payoff.",
+        accent: "#67e8f9", glow: "rgba(103,232,249,0.5)", ring: true },
+  t3: { name: "TOOL WISHLIST",     meta: "EUROPA · ICY MOON",   body: "TOOL WISHLIST",    planet: "europa",    stat: "Free access #1",             blurb: "Free, beginner-friendly, and good code — in that order. Newcomers want to try without commitment and produce something real on the first try.",
+        accent: "#7dd3fc", glow: "rgba(125,211,252,0.5)", ring: false },
+  t4: { name: "ACCESSIBILITY",     meta: "TITAN · HAZE MOON",   body: "ACCESSIBILITY",     planet: "titan",     stat: "Tutorials are #1 request",   blurb: "Newcomers don't want a manual — they want a guide. Walk-throughs, classroom intros, and visible peer projects do more than feature lists.",
+        accent: "#fcd34d", glow: "rgba(252,211,77,0.45)", ring: false },
+  t5: { name: "APP WISHLIST",      meta: "ENCELADUS · ICY MOON", body: "APP WISHLIST", planet: "enceladus", stat: "Productivity & finance lead", blurb: "When asked what they'd build first, newcomers pick everyday utility — productivity, finance, health. Useful, not novel, is the bar.",
+        accent: "#e0f2fe", glow: "rgba(186,230,253,0.5)", ring: false },
+
+  // ---- Prompt libraries (neighboring systems / exoplanets) ----
+  pl1: { name: "CREATIVE & SOCIAL", meta: "TRAPPIST-1e · ROCKY",  body: "CREATIVE & SOCIAL",      planet: "trappist",   stat: "Drafts, scripts, beats",     blurb: "Prompts that help students draft, remix, and polish creative work — captions, scripts, story beats, and short-form social posts.",
+         accent: "#fb923c", glow: "rgba(251,146,60,0.5)", ring: false },
+  pl2: { name: "PRODUCTIVITY",      meta: "KEPLER-22b · OCEAN",   body: "PRODUCTIVITY",       planet: "kepler22",   stat: "Plans, schedules, todos",   blurb: "Prompts that turn fuzzy goals into concrete, time-boxed plans — daily routines, weekly reviews, and meeting prep.",
+         accent: "#0ea5e9", glow: "rgba(14,165,233,0.5)", ring: false },
+  pl3: { name: "ACADEMIC",          meta: "HD 189733 b · COBALT", body: "ACADEMIC",      planet: "hd189",      stat: "Theses & study guides",     blurb: "Prompts for academic work — thesis statements, structured arguments, source synthesis, and study-guide generation.",
+         accent: "#60a5fa", glow: "rgba(96,165,250,0.5)", ring: true },
+  pl4: { name: "WEB & DATA",        meta: "55 CANCRI e · LAVA",   body: "WEB & DATA",      planet: "55cnc",      stat: "Components & queries",      blurb: "Prompts focused on shipping web work and pulling insight from data — UI components, SQL/queries, and quick exploratory analysis.",
+         accent: "#f97316", glow: "rgba(249,115,22,0.6)", ring: false },
+  pl5: { name: "FINANCE",           meta: "PROXIMA b · ROCKY",    body: "FINANCE",        planet: "proxima",    stat: "Budgets & calculators",     blurb: "Prompts that help students reason about money — building budgets, comparing plans, and modeling small financial decisions.",
+         accent: "#d97706", glow: "rgba(217,119,6,0.5)", ring: false },
+  pl6: { name: "HEALTH",            meta: "KEPLER-186f · ROCKY",  body: "HEALTH",      planet: "kepler186",  stat: "Routines & resets",         blurb: "Prompts oriented around healthy routines — workout structures, sleep hygiene, and habit-tracking scaffolds.",
+         accent: "#fcd34d", glow: "rgba(252,211,77,0.5)", ring: false }
+};
+
+const GALAXY_TOPICS = {
+  purple: ["p1","p2","p3","p4","p5","p6"],
+  teal:   ["t1","t2","t3","t4","t5"],
+  prompt: ["pl2","pl1","pl3","pl4","pl5","pl6"]
+};
+
+const explorerSelected = { purple: "p1", teal: "t1", prompt: "pl2" };
+const explorerTransitioning = { purple: false, teal: false, prompt: false };
+const nextAdvanceAt = { purple: 0, teal: 0, prompt: 0 };
+const EXPLORER_MOTION = {
+  // Keep JS class timing synchronized with CSS animation durations.
+  // Matches the longest exit/enter keyframe (next-orb dive 280ms,
+  // body enter 320ms + next-orb rise delay 40ms).
+  zoomOutMs: 280,
+  zoomInMs: 360
+};
+
+function getNextPid(galaxyKey, fromPid = explorerSelected[galaxyKey]) {
+  const ids = GALAXY_TOPICS[galaxyKey];
+  const curIdx = ids.indexOf(fromPid);
+  if (curIdx < 0) return ids[0];
+  return ids[(curIdx + 1) % ids.length];
+}
+
+function advanceExplorer(galaxyKey) {
+  const now = performance.now();
+  if (now - (nextAdvanceAt[galaxyKey] || 0) < 140) return;
+  nextAdvanceAt[galaxyKey] = now;
+  const computedNextPid = getNextPid(galaxyKey, explorerSelected[galaxyKey]);
+  if (computedNextPid) {
+    selectExplorer(galaxyKey, computedNextPid, { animate: true });
+  } else {
+    cycleExplorer(galaxyKey, +1);
+  }
+}
+window.advanceExplorer = advanceExplorer;
+
+function applyBodyTheme(scene, info, opts = {}) {
+  const stage = scene.querySelector('.explorer-stage');
+  const body = stage.querySelector('.explorer-body');
+  stage.style.setProperty('--xb-glow', info.glow);
+  stage.style.setProperty('--xb-ring', info.glow);
+  stage.setAttribute('data-has-ring', info.ring ? 'true' : 'false');
+  body.className = 'explorer-body';
+  if (info.planet) body.classList.add('planet-' + info.planet);
+  let clouds = body.querySelector('.clouds');
+  if (info.planet === 'earth') {
+    if (!clouds) { clouds = document.createElement('div'); clouds.className = 'clouds'; body.appendChild(clouds); }
+  } else if (clouds) { clouds.remove(); }
+  // No inline transform/opacity — the keyframe on .explorer-body-wrap
+  // owns motion. Setting inline styles here was triggering a competing
+  // transition on .explorer-body and causing visible stutter.
+}
+
+function buildMenu(galaxyKey) {
+  const ids = GALAXY_TOPICS[galaxyKey];
+  const menu = document.getElementById('x-menu-' + galaxyKey);
+  // remove old items but keep eyebrow
+  Array.from(menu.querySelectorAll('.x-menu-item')).forEach(el => el.remove());
+  ids.forEach((pid, i) => {
+    const info = EXPLORER[pid];
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'x-menu-item';
+    btn.setAttribute('data-pid', pid);
+    btn.setAttribute('aria-label', info.name);
+    btn.style.setProperty('--accent', info.accent);
+    btn.style.setProperty('--accent-glow', info.glow);
+    btn.style.setProperty('--mini-glow', info.glow);
+
+    const mini = document.createElement('span');
+    mini.className = 'x-mini explorer-body' + (info.planet ? ' planet-' + info.planet : '');
+
+    const text = document.createElement('span');
+    text.className = 'x-text';
+    const nm = document.createElement('span');
+    nm.className = 'x-name';
+    nm.textContent = info.name;
+    text.appendChild(nm);
+
+    const num = document.createElement('span');
+    num.className = 'x-num';
+    num.textContent = String(i + 1).padStart(2, '0');
+
+    btn.appendChild(mini);
+    btn.appendChild(text);
+    btn.appendChild(num);
+
+    btn.addEventListener('click', () => selectExplorer(galaxyKey, pid));
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectExplorer(galaxyKey, pid); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); cycleExplorer(galaxyKey, +1); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); cycleExplorer(galaxyKey, -1); }
+    });
+    menu.appendChild(btn);
+  });
+}
+
+function cycleExplorer(galaxyKey, dir) {
+  const ids = GALAXY_TOPICS[galaxyKey];
+  const cur = explorerSelected[galaxyKey];
+  let i = ids.indexOf(cur);
+  i = (i + dir + ids.length) % ids.length;
+  selectExplorer(galaxyKey, ids[i], { animate: true });
+  // focus new item
+  const menu = document.getElementById('x-menu-' + galaxyKey);
+  const btn = menu.querySelector(`[data-pid="${ids[i]}"]`);
+  if (btn) btn.focus();
+}
+
+function buildInfo(galaxyKey, pid) {
+  const info = EXPLORER[pid];
+  const root = document.getElementById('x-info-' + galaxyKey);
+  root.replaceChildren();
+  root.style.setProperty('--accent', info.accent);
+  root.style.setProperty('--accent-glow', info.glow);
+
+  const eb = document.createElement('div');
+  eb.className = 'x-eyebrow';
+  eb.textContent = '◉ TARGET ACQUIRED';
+
+  const h = document.createElement('h2');
+  h.textContent = info.name;
+
+  const stat = document.createElement('div');
+  stat.className = 'x-stat';
+  const a = document.createElement('span');
+  a.innerHTML = ''; // safe: setting textContent below via spans
+  const lab = document.createElement('span'); lab.className = 'lab';
+  lab.textContent = 'KEY STAT';
+  const val = document.createElement('span'); val.className = 'v';
+  val.textContent = info.stat;
+  a.appendChild(lab); a.appendChild(document.createTextNode(' ')); a.appendChild(val);
+  stat.appendChild(a);
+
+  const p = document.createElement('p');
+  p.className = 'x-blurb';
+  p.textContent = info.blurb;
+
+  const cta = document.createElement('button');
+  cta.type = 'button';
+  cta.className = 'x-cta';
+  cta.style.background = info.accent;
+  cta.style.setProperty('--accent-glow', info.glow);
+  cta.textContent = 'OPEN BRIEFING ';
+  const arr = document.createElement('span');
+  arr.className = 'arrow';
+  arr.textContent = '→';
+  cta.appendChild(arr);
+  cta.addEventListener('click', () => openPanel(pid));
+
+  root.appendChild(eb);
+  root.appendChild(h);
+  root.appendChild(stat);
+  root.appendChild(p);
+  root.appendChild(cta);
+}
+
+function spawnDust(galaxyKey) {
+  const dust = document.getElementById('x-dust-' + galaxyKey);
+  if (!dust || dust.dataset.seeded === '1') return;
+  dust.dataset.seeded = '1';
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const count = REDUCED ? 12 : 28;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('div');
+    s.className = 'speck';
+    s.style.left = (Math.random() * 100) + '%';
+    s.style.top = (40 + Math.random() * 50) + '%';
+    s.style.setProperty('--dx', (Math.random() * 60 - 30) + 'px');
+    s.style.setProperty('--dy', (-40 - Math.random() * 60) + 'px');
+    s.style.animationDelay = (Math.random() * 12) + 's';
+    s.style.animationDuration = (8 + Math.random() * 10) + 's';
+    dust.appendChild(s);
+  }
+}
+
+function updateNextPlanet(galaxyKey, pid) {
+  const nextPid = getNextPid(galaxyKey, pid);
+  const nextInfo = EXPLORER[nextPid];
+
+  const nextBodyEl = document.getElementById('x-next-body-' + galaxyKey);
+  const nextNameEl = document.getElementById('x-next-name-' + galaxyKey);
+  const nextWrapEl = document.getElementById('x-next-' + galaxyKey);
+  if (!nextBodyEl || !nextNameEl || !nextWrapEl) return;
+
+  // apply planet class
+  nextBodyEl.className = 'explorer-next-body explorer-body';
+  if (nextInfo.planet) nextBodyEl.classList.add('planet-' + nextInfo.planet);
+
+  nextNameEl.textContent = nextInfo.body.toUpperCase();
+  nextWrapEl.dataset.nextPid = nextPid;
+  nextWrapEl.setAttribute('aria-label', `Go to ${nextInfo.name}`);
+}
+
+function buildPlanetLabel(galaxyKey, pid) {
+  const info = EXPLORER[pid];
+  const nameEl  = document.getElementById('x-label-name-'  + galaxyKey);
+  const blurbEl = document.getElementById('x-label-blurb-' + galaxyKey);
+  const ctaEl   = document.getElementById('x-label-cta-'   + galaxyKey);
+  if (!nameEl || !blurbEl || !ctaEl) return;
+  nameEl.textContent  = info.name;
+  blurbEl.textContent = info.blurb;
+  ctaEl.onclick = () => openPanel(pid);
+}
+
+function applyExplorerSelection(galaxyKey, pid, opts = {}) {
+  explorerSelected[galaxyKey] = pid;
+  const scene = document.querySelector(`.scene[data-galaxy-key="${galaxyKey}"]`);
+  if (!scene) return;
+  const info = EXPLORER[pid];
+  scene.querySelectorAll('.x-menu-item').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-pid') === pid);
+  });
+  applyBodyTheme(scene, info, { suppressPop: !!opts.suppressPop });
+  buildInfo(galaxyKey, pid);
+  buildPlanetLabel(galaxyKey, pid);
+  if (!opts.suppressNext) updateNextPlanet(galaxyKey, pid);
+}
+
+function selectExplorer(galaxyKey, pid, opts = {}) {
+  const scene = document.querySelector(`.scene[data-galaxy-key="${galaxyKey}"]`);
+  if (!scene) return;
+  if (explorerSelected[galaxyKey] === pid && !opts.force) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const animate = opts.animate !== false && !reducedMotion;
+  if (!animate || explorerTransitioning[galaxyKey]) {
+    applyExplorerSelection(galaxyKey, pid, { suppressPop: false });
+    return;
+  }
+
+  const stage = scene.querySelector('.explorer-stage');
+  if (!stage) {
+    applyExplorerSelection(galaxyKey, pid);
+    return;
+  }
+
+  // Move all heavy non-visual DOM work to BEFORE the keyframes start.
+  // The right-side info card is `display: none`, the menu's active
+  // toggle has its own 220ms transition that's now suppressed during
+  // travel — none of this needs to happen mid-flight where it drops
+  // animation frames on the 150vmin painted body.
+  explorerSelected[galaxyKey] = pid;
+  const info = EXPLORER[pid];
+  scene.querySelectorAll('.x-menu-item').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-pid') === pid);
+  });
+  buildInfo(galaxyKey, pid);
+
+  explorerTransitioning[galaxyKey] = true;
+  scene.classList.add('is-traveling');
+  stage.classList.remove('x-zoom-in');
+  stage.classList.add('x-zoom-out');
+
+  // #region agent log explorer-travel-start rects
+  try {
+    const bodyWrap = stage.querySelector('.explorer-body-wrap');
+    const stageRect = stage.getBoundingClientRect();
+    const bodyWrapRect = bodyWrap ? bodyWrap.getBoundingClientRect() : null;
+    const bodyWrapBottomCss = bodyWrap ? getComputedStyle(bodyWrap).bottom : null;
+    const bodyWrapContain = bodyWrap ? getComputedStyle(bodyWrap).contain : null;
+    const bodyWrapOverflow = bodyWrap ? getComputedStyle(bodyWrap).overflow : null;
+    const bodyEl = stage.querySelector('.explorer-body');
+    const bodyOverflow = bodyEl ? getComputedStyle(bodyEl).overflow : null;
+    const bodyBoxShadow = bodyEl ? getComputedStyle(bodyEl).boxShadow : null;
+    fetch('http://127.0.0.1:7597/ingest/a5c5804b-c2aa-4fb1-aafc-edf5485fb9bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'680df7'},body:JSON.stringify({sessionId:'680df7',runId:'pre-fix',hypothesisId:'D',location:'index.html:selectExplorer-travelStart',message:'travel start bounds for top-clipping hypothesis',data:{galaxyKey,pid,stageRect,bodyWrapRect,bodyWrapBottomCss},timestamp:Date.now()})}).catch(()=>{});
+  } catch (e) {}
+  // #endregion
+
+  setTimeout(() => {
+    requestAnimationFrame(() => {
+      // Mid-flight swap is now minimal: planet body class + theme vars,
+      // label text, next-orb class. Everything else already happened.
+      applyBodyTheme(scene, info, { suppressPop: true });
+      buildPlanetLabel(galaxyKey, pid);
+      updateNextPlanet(galaxyKey, pid);
+      stage.classList.remove('x-zoom-out');
+      stage.classList.add('x-zoom-in');
+
+      // #region agent log explorer-travel-mid rects
+      try {
+        const bodyWrap = stage.querySelector('.explorer-body-wrap');
+        const stageRect = stage.getBoundingClientRect();
+        const bodyWrapRect = bodyWrap ? bodyWrap.getBoundingClientRect() : null;
+        const stageOverflow = getComputedStyle(stage).overflow;
+        const bodyWrapContain = bodyWrap ? getComputedStyle(bodyWrap).contain : null;
+        const bodyWrapOverflow = bodyWrap ? getComputedStyle(bodyWrap).overflow : null;
+        const bodyEl = stage.querySelector('.explorer-body');
+        const bodyOverflow = bodyEl ? getComputedStyle(bodyEl).overflow : null;
+        const bodyBoxShadow = bodyEl ? getComputedStyle(bodyEl).boxShadow : null;
+        const nextWrap = stage.querySelector('.explorer-next-wrap');
+        const nextRect = nextWrap ? nextWrap.getBoundingClientRect() : null;
+        fetch('http://127.0.0.1:7597/ingest/a5c5804b-c2aa-4fb1-aafc-edf5485fb9bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'680df7'},body:JSON.stringify({sessionId:'680df7',runId:'pre-fix',hypothesisId:'A',location:'index.html:selectExplorer-travelMid',message:'mid-flight bounds/contain/overflow for clipping diagnosis',data:{galaxyKey,pid,stageRect,bodyWrapRect,nextRect,stageOverflow,bodyWrapContain,bodyWrapOverflow,bodyOverflow,bodyBoxShadow},timestamp:Date.now()})}).catch(()=>{});
+      } catch (e) {}
+      // #endregion
+    });
+
+    setTimeout(() => {
+      stage.classList.remove('x-zoom-in');
+      explorerTransitioning[galaxyKey] = false;
+      scene.classList.remove('is-traveling');
+    }, EXPLORER_MOTION.zoomInMs);
+  }, EXPLORER_MOTION.zoomOutMs);
+}
+
+function initExplorer(galaxyKey) {
+  wireNextWrap(galaxyKey);
+  const scene = document.querySelector(`.scene[data-galaxy-key="${galaxyKey}"]`);
+  if (!scene || scene.dataset.xInit === '1') return;
+  scene.dataset.xInit = '1';
+  buildMenu(galaxyKey);
+  spawnDust(galaxyKey);
+  selectExplorer(galaxyKey, explorerSelected[galaxyKey], { animate: false, force: true });
+
+  // #region agent log explorer-init rects/overflow
+  try {
+    const stage = scene.querySelector('.explorer-stage');
+    const bodyWrap = stage ? stage.querySelector('.explorer-body-wrap') : null;
+    const bodyEl = stage ? stage.querySelector('.explorer-body') : null;
+    const nextWrap = stage ? stage.querySelector('.explorer-next-wrap') : null;
+    const stageRect = stage ? stage.getBoundingClientRect() : null;
+    const bodyWrapRect = bodyWrap ? bodyWrap.getBoundingClientRect() : null;
+    const bodyWrapContain = bodyWrap ? getComputedStyle(bodyWrap).contain : null;
+    const bodyWrapOverflow = bodyWrap ? getComputedStyle(bodyWrap).overflow : null;
+    const bodyOverflow = bodyEl ? getComputedStyle(bodyEl).overflow : null;
+    const bodyBoxShadow = bodyEl ? getComputedStyle(bodyEl).boxShadow : null;
+    const nextRect = nextWrap ? nextWrap.getBoundingClientRect() : null;
+    fetch('http://127.0.0.1:7597/ingest/a5c5804b-c2aa-4fb1-aafc-edf5485fb9bb',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'680df7'},body:JSON.stringify({sessionId:'680df7',runId:'pre-fix',hypothesisId:'A',location:'index.html:initExplorer',message:'initial bounds/contain/overflow for clipping diagnosis',data:{galaxyKey,stageOverflow:stage?getComputedStyle(stage).overflow:null,sceneOverflow:getComputedStyle(scene).overflow,stageRect,bodyWrapRect,bodyWrapContain,bodyWrapOverflow,bodyOverflow,bodyBoxShadow,nextRect},timestamp:Date.now()})}).catch(()=>{});
+  } catch (e) {}
+  // #endregion
+}
+
+function wireNextWrap(galaxyKey) {
+  const nextWrap = document.getElementById('x-next-' + galaxyKey);
+  if (!nextWrap) return;
+  if (nextWrap.dataset.wired === '1') return;
+  nextWrap.dataset.wired = '1';
+
+  nextWrap.setAttribute('role', 'button');
+  nextWrap.setAttribute('tabindex', '0');
+  nextWrap.setAttribute('aria-label', 'Go to next body');
+  nextWrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      advanceExplorer(galaxyKey);
+    }
+  });
+  nextWrap.addEventListener('pointerdown', () => {
+    nextWrap.style.transform = 'translateX(-50%) scale(0.98)';
+  });
+  nextWrap.addEventListener('pointerup', () => {
+    nextWrap.style.transform = '';
+  });
+  nextWrap.addEventListener('pointerleave', () => {
+    nextWrap.style.transform = '';
+  });
+}
+
+if (!document.body.dataset.nextWrapCaptureBound) {
+  document.body.dataset.nextWrapCaptureBound = '1';
+  document.addEventListener('click', (e) => {
+    const nextWrap = e.target.closest('.explorer-next-wrap');
+    if (!nextWrap) return;
+    const screenToKey = {
+      'galaxy-purple': 'purple',
+      'galaxy-teal': 'teal',
+      'galaxy-prompt': 'prompt'
+    };
+    const keyFromCurrentScreen = screenToKey[currentScreen] || null;
+    const keyFromVisibleScene = document.querySelector('.screen:not(.hidden) .scene[data-galaxy-key]')?.getAttribute('data-galaxy-key') || null;
+    const keyFromTarget = nextWrap.id.replace(/^x-next-/, '');
+    const galaxyKey = keyFromCurrentScreen || keyFromVisibleScene || keyFromTarget;
+    if (!GALAXY_TOPICS[galaxyKey]) return;
+    e.preventDefault();
+    e.stopPropagation();
+    advanceExplorer(galaxyKey);
+  }, true);
+}
+
+['purple','teal','prompt'].forEach(initExplorer);
+
+// re-init on enterGalaxy (cheap; idempotent guard above)
+const _origEnter = window.enterGalaxy;
+window.enterGalaxy = function (key) {
+  _origEnter(key);
+  initExplorer(key);
+};
+
+// ============= TWEAKS: Explorer vs. Orbital Map =============
+(function setupTweaks() {
+  let panelEl = null;
+  let mode = 'explorer';
+
+  function setMode(m) {
+    mode = m;
+    document.querySelectorAll('.scene[data-galaxy-key]').forEach(s => {
+      s.setAttribute('data-mode', m);
+    });
+    // persist
+    window.parent.postMessage({type: '__edit_mode_set_keys', edits: {sceneMode: m}}, '*');
+    if (panelEl) {
+      panelEl.querySelectorAll('[data-mode-btn]').forEach(b => {
+        b.setAttribute('aria-pressed', b.getAttribute('data-mode-btn') === m ? 'true' : 'false');
+      });
+    }
+  }
+
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "sceneMode": "explorer"
+  }/*EDITMODE-END*/;
+  setMode(TWEAK_DEFAULTS.sceneMode || 'explorer');
+
+  function buildPanel() {
+    if (panelEl) return panelEl;
+    panelEl = document.createElement('div');
+    panelEl.style.cssText = `
+      position: fixed; bottom: 22px; left: 22px; z-index: 50;
+      background: linear-gradient(180deg, rgba(5,4,3,0.98), rgba(5,4,3,0.98));
+      border: 1px solid rgba(148,163,184,0.28);
+      border-radius: 8px;
+      padding: 14px 16px;
+      width: 240px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      font-family: 'Space Grotesk', sans-serif;
+      color: #e2e8f0;
+    `;
+    const head = document.createElement('div');
+    head.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;';
+    const title = document.createElement('div');
+    title.textContent = 'Tweaks';
+    title.style.cssText = "font-family:'Orbitron',sans-serif; font-size:12px; letter-spacing:0.2em; font-weight:700;";
+    const close = document.createElement('button');
+    close.textContent = '×';
+    close.style.cssText = 'background:transparent;border:1px solid rgba(148,163,184,0.28);color:#e2e8f0;width:22px;height:22px;border-radius:50%;cursor:pointer;line-height:1;';
+    close.onclick = () => {
+      panelEl.style.display = 'none';
+      window.parent.postMessage({type: '__edit_mode_dismissed'}, '*');
+    };
+    head.appendChild(title); head.appendChild(close);
+
+    const lab = document.createElement('div');
+    lab.textContent = 'GALAXY VIEW';
+    lab.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.25em;color:#94a3b8;margin-bottom:8px;";
+
+    const seg = document.createElement('div');
+    seg.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px;';
+    [['explorer','Explorer'], ['orbit','Orbit Map']].forEach(([val, label]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      b.setAttribute('data-mode-btn', val);
+      b.style.cssText = `
+        padding: 8px 10px; font-size: 11px; letter-spacing: 0.15em;
+        font-family: 'JetBrains Mono', monospace;
+        background: transparent; color: #e2e8f0;
+        border: 1px solid rgba(148,163,184,0.28);
+        border-radius: 4px; cursor: pointer;
+        text-transform: uppercase;
+      `;
+      b.onclick = () => setMode(val);
+      seg.appendChild(b);
+    });
+
+    panelEl.appendChild(head);
+    panelEl.appendChild(lab);
+    panelEl.appendChild(seg);
+    panelEl.style.display = 'none';
+    document.body.appendChild(panelEl);
+
+    // reflect current mode
+    panelEl.querySelectorAll('[data-mode-btn]').forEach(b => {
+      b.setAttribute('aria-pressed', b.getAttribute('data-mode-btn') === mode ? 'true' : 'false');
+      // visual selected style via inline
+    });
+    // selected style hookup
+    const styleSelected = document.createElement('style');
+    styleSelected.textContent = `
+      [data-mode-btn][aria-pressed="true"] { background: rgba(124,58,237,0.25) !important; border-color: #a78bfa !important; color: #fff !important; }
+    `;
+    document.head.appendChild(styleSelected);
+    return panelEl;
+  }
+
+  window.addEventListener('message', (e) => {
+    if (!e.data || typeof e.data !== 'object') return;
+    if (e.data.type === '__activate_edit_mode') {
+      buildPanel();
+      panelEl.style.display = 'block';
+    } else if (e.data.type === '__deactivate_edit_mode') {
+      if (panelEl) panelEl.style.display = 'none';
+    }
+  });
+
+  // announce after listener is in place
+  window.parent.postMessage({type: '__edit_mode_available'}, '*');
+})();
+</script>
+</body>
+</html>
