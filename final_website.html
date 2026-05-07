@@ -1687,9 +1687,168 @@
     .rocket-wrap, .moon, .planet-ringed, .ufo-wrap { animation: none !important; }
     .asteroid { animation: none !important; }
   }
+
+  /* ══════════════════════════════════════════
+     CHATBOT TYPING INTRO
+     ══════════════════════════════════════════ */
+  #chatbot-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: opacity;
+  }
+  #chatbot-intro.cb-fade-out {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+  #chatbot-wrap { width: min(640px, 88vw); }
+  #chatbot-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.28);
+    text-align: center;
+    margin: 0 0 18px;
+    text-transform: uppercase;
+  }
+  #chatbot-box {
+    background: #0f1116;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 18px;
+    padding: 16px 18px 12px;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 12px 48px rgba(0,0,0,0.75);
+  }
+  #chatbot-input-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    min-height: 38px;
+  }
+  #chatbot-typed-area {
+    flex: 1;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    color: rgba(255,255,255,0.86);
+    line-height: 1.55;
+    word-break: break-word;
+    padding-bottom: 2px;
+  }
+  #chatbot-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: rgba(167,139,250,0.95);
+    margin-left: 1px;
+    vertical-align: text-bottom;
+    animation: cb-blink 0.85s step-end infinite;
+  }
+  #chatbot-cursor.cb-cursor-hide {
+    animation: none;
+    opacity: 0;
+  }
+  @keyframes cb-blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+  #chatbot-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  #chatbot-actions { display: flex; align-items: center; gap: 4px; }
+  .cb-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: transparent;
+    color: rgba(255,255,255,0.42);
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    cursor: default;
+    letter-spacing: 0.01em;
+  }
+  .cb-action-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+  #csend-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    flex-shrink: 0;
+    transition: background 0.35s ease, color 0.35s ease;
+  }
+  #csend-btn.send-ready {
+    background: #a78bfa;
+    color: #000;
+    animation: send-pulse 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  @keyframes send-pulse {
+    0%   { box-shadow: 0 0 0 0   rgba(167,139,250,0.75); }
+    55%  { box-shadow: 0 0 0 14px rgba(167,139,250,0);   }
+    100% { box-shadow: 0 0 0 18px rgba(167,139,250,0);   }
+  }
+  #csend-btn .cb-icon-mic  { display: block; }
+  #csend-btn .cb-icon-send { display: none;  }
+  #csend-btn.send-ready .cb-icon-mic  { display: none;  }
+  #csend-btn.send-ready .cb-icon-send { display: block; }
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════
+     CHATBOT TYPING INTRO
+     ═══════════════════════════════════════════════════ -->
+<div id="chatbot-intro" aria-hidden="true">
+  <div id="chatbot-wrap">
+    <p id="chatbot-label">Vibecoding Mission Control</p>
+    <div id="chatbot-box">
+      <div id="chatbot-input-row">
+        <div id="chatbot-typed-area">
+          <span id="chatbot-typed"></span><span id="chatbot-cursor"></span>
+        </div>
+        <button id="csend-btn" aria-label="Send">
+          <svg class="cb-icon-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          <svg class="cb-icon-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div id="chatbot-footer">
+        <div id="chatbot-actions">
+          <button class="cb-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            Attach
+          </button>
+          <button class="cb-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Search
+          </button>
+          <button class="cb-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Think
+          </button>
+          <button class="cb-action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Code
+          </button>
+        </div>
+        <div style="width:34px"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <canvas id="stars"></canvas>
 
@@ -3631,6 +3790,56 @@ window.enterGalaxy = function (key) {
 
   // announce after listener is in place
   window.parent.postMessage({type: '__edit_mode_available'}, '*');
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CHATBOT TYPING INTRO  ·  Runs on page load
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  const PROMPT_TEXT = 'Build me a space-themed vibecode project with planets based on my survey data';
+  const BASE_DELAY  = 36;   // ms per character (base)
+  const JITTER      = 24;   // ms random jitter per char
+  const PRE_PAUSE   = 540;  // ms pause before typing starts
+  const POST_PAUSE  = 460;  // ms pause after last char before send
+  const SEND_HOLD   = 700;  // ms after send pulse before fade-out
+
+  function run() {
+    const intro   = document.getElementById('chatbot-intro');
+    const typed   = document.getElementById('chatbot-typed');
+    const cursor  = document.getElementById('chatbot-cursor');
+    const sendBtn = document.getElementById('csend-btn');
+    if (!intro || !typed || !cursor || !sendBtn) return;
+
+    let i = 0;
+
+    function typeNext() {
+      if (i < PROMPT_TEXT.length) {
+        typed.textContent += PROMPT_TEXT[i++];
+        setTimeout(typeNext, BASE_DELAY + Math.random() * JITTER);
+      } else {
+        setTimeout(() => {
+          cursor.classList.add('cb-cursor-hide');
+          sendBtn.classList.add('send-ready');
+          setTimeout(() => {
+            intro.classList.add('cb-fade-out');
+            setTimeout(() => { intro.style.display = 'none'; }, 650);
+          }, SEND_HOLD);
+        }, POST_PAUSE);
+      }
+    }
+
+    setTimeout(typeNext, PRE_PAUSE);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
 })();
 </script>
 </body>
