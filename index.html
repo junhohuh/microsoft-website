@@ -589,7 +589,7 @@
   #panel {
     position: fixed;
     top: 0; right: 0;
-    width: 460px;
+    width: 33.333vw;
     max-width: 95vw;
     height: 100vh;
     /* Fully opaque background — was blur(20px), which had to re-blur
@@ -1972,7 +1972,7 @@
 
     <!-- Prompt library mode -->
     <div class="prompt-mode" id="prompt-mode">
-      <span class="placeholder-tag">Placeholder Library</span>
+      <!-- <span class="placeholder-tag">Placeholder Library</span> -->
       <h2 class="panel-title" id="pl-title-el">Title</h2>
       <div class="stat-headline" id="pl-stat-el">Stat</div>
       <p class="panel-desc" id="pl-desc-el">Description</p>
@@ -2965,10 +2965,10 @@ function renderTabContent() {
   const out = document.getElementById('tab-content');
   out.replaceChildren();
 
-  const tag = document.createElement('span');
-  tag.className = 'placeholder-tag';
-  tag.textContent = 'Placeholder';
-  out.appendChild(tag);
+  // const tag = document.createElement('span');
+  // tag.className = 'placeholder-tag';
+  // tag.textContent = 'Placeholder';
+  // out.appendChild(tag);
 
   const idx = promptUiState.tabIndex;
   if (idx === 0) {
