@@ -2336,6 +2336,74 @@ const promptLibraries = {
   }
 };
 
+// ── pl1: Creative & Social ──────────────────────────────────────────────────
+promptLibraries.pl1.useCases[0].label = "Personal Portfolio Site";
+promptLibraries.pl1.useCases[0].polishedPrompt = `Build a personal portfolio site for a developer or creative professional that helps them showcase their work and make a strong first impression. The project is for a personal domain or GitHub Pages deployment, and the user is typically job-seeking or freelancing and wants to stand out with a polished online presence. This project should fit the vibe of dark, sleek, and professional. Include smooth scrolling between a Hero section (name, one-line role, and CTA button), an About section (bio and skills grid), a Projects card grid, and a Contact form; the project grid should be 3 columns on desktop, 2 on tablet, and 1 on mobile, with each card showing a cover image, title, tech stack as pill badges, and a short description that reveals GitHub and Live links behind a semi-transparent dark hover overlay. Keep the design mobile-first with a sticky blur-backdrop nav, staggered fade-up card animations on scroll, and a dark/light mode toggle that persists in localStorage.`;
+promptLibraries.pl1.useCases[0].idealResponse = `Delivers a fully functional dark-themed portfolio with responsive 3/2/1 column grid, hover overlay on project cards, smooth scroll navigation, sticky blurred nav, working dark/light toggle stored in localStorage, and staggered fade-up scroll animations. All sections (Hero, About, Projects, Contact) present and styled.`;
+promptLibraries.pl1.useCases[0].criteria = [
+  "Dark theme implemented (#0f0f0f bg, #e8e8e8 text)",
+  "All 4 sections present: Hero, About, Projects, Contact",
+  "Responsive grid: 3 col desktop → 2 tablet → 1 mobile",
+  "Project card shows image, title, tech pills, description",
+  "Hover overlay reveals GitHub + Live links on cards",
+  "Staggered fade-up animation on scroll into view",
+  "Sticky nav with backdrop-blur",
+  "Dark/light mode toggle persists in localStorage",
+  "Smooth scrolling between sections",
+  "Contact form present and functional"
+];
+promptLibraries.pl1.useCases[0].badResponse.text = `Creates a basic static HTML page with just a name and links list. No grid layout, no animations, no project cards with hover effects, no dark/light toggle.`;
+promptLibraries.pl1.useCases[0].badResponse.failsAt = [
+  "No responsive grid",
+  "Missing hover overlay",
+  "No animations",
+  "No localStorage toggle",
+  "Missing sections"
+];
+
+promptLibraries.pl1.useCases[1].label = "Personal Project Landing Page";
+promptLibraries.pl1.useCases[1].polishedPrompt = `Build a startup landing page for a founder or indie maker that helps them generate waitlist signups and communicate product value at a glance. The project is for a public-facing marketing site, and the user is typically launching an early-stage product and needs to build credibility fast. This project should fit the vibe of bold, conversion-focused, and polished. Include a Hero with a bold headline, subheading, and hero screenshot; a social proof bar with 5 company logos; a 3-column grid of 6 feature cards; a 3-step horizontal "How it Works" flow; and a 3-tier pricing section (Free, Pro, Enterprise) with the middle tier visually distinguished as "Most Popular." Make the core flow feel trustworthy and exciting, with a waitlist form that triggers a confetti animation on successful submit and a live social proof counter. Keep the design fully mobile responsive.`;
+promptLibraries.pl1.useCases[1].idealResponse = `All 6 sections present in correct order. Hero includes CTA button + product mockup. Social proof bar with logos. Features grid: 3 columns, 6 cards with icons + descriptions. How It Works: 3 numbered steps with connectors. Pricing: 3 cards, middle card elevated + "Most Popular" badge. Confetti fires on form submit. Fully responsive.`;
+promptLibraries.pl1.useCases[1].criteria = [
+  "All 6 sections present in correct order",
+  "Hero has headline, subheading, CTA + mockup",
+  "Social proof bar with logos and label",
+  "Features: 3-column grid, 6 cards",
+  "How It Works: 3 steps with visual connector",
+  "Pricing: 3 tiers, middle card has 'Most Popular' treatment",
+  "Confetti animation fires on form submit",
+  "Fully mobile responsive"
+];
+promptLibraries.pl1.useCases[1].badResponse.text = `Returns a single hero section with a headline and one button. No pricing, no features section, no confetti, no social proof.`;
+promptLibraries.pl1.useCases[1].badResponse.failsAt = [
+  "Missing 5 of 6 sections",
+  "No pricing tiers",
+  "No confetti",
+  "No social proof bar"
+];
+
+promptLibraries.pl1.useCases[2].label = "Karaoke Web App";
+promptLibraries.pl1.useCases[2].polishedPrompt = `Build a karaoke web app for party hosts and casual singers that helps them search songs, manage a performance queue, and sing along in real time without needing dedicated hardware. The project is for in-person social settings like house parties or small events, and the user is usually a group of friends who want a fun, low-friction karaoke experience from any browser. This project should fit the vibe of playful, energetic, and easy to pick up. Include a searchable song database (mock data is fine), a live queue system, synchronized lyrics display, and a performance mode with large readable text optimized for singing from a distance; add optional scoring and support for both solo and group use. Make the core flow feel fast and fun so transitions between songs and singers stay seamless.`;
+promptLibraries.pl1.useCases[2].idealResponse = `A web app with a search bar connected to a mock song database (10+ songs), a drag-reorderable queue, a full-screen lyrics display mode with synchronized scrolling, and a clean performance UI with large font. Scoring or fun feedback present. Design readable at distance for group use.`;
+promptLibraries.pl1.useCases[2].criteria = [
+  "Song search with real or mock database of ≥ 10 songs",
+  "Queue system: add, remove, reorder songs",
+  "Lyrics display synchronized during playback",
+  "Performance mode fills screen with large, high-contrast text",
+  "Optional scoring or feedback element included",
+  "Design works for group viewing (readable from distance)",
+  "Switching between queue songs is seamless"
+];
+promptLibraries.pl1.useCases[2].badResponse.text = `Here is a karaoke app. It plays a YouTube video. The lyrics are shown below in a small div. Users type in the song name in a text box.`;
+promptLibraries.pl1.useCases[2].badResponse.failsAt = [
+  "No queue system",
+  "Lyrics static, not synchronized",
+  "Small div unusable for group viewing",
+  "No searchable database",
+  "No scoring"
+];
+
+// ── pl2: Productivity ───────────────────────────────────────────────────────
 promptLibraries.pl2.useCases[0].label = "Habit Tracker App";
 promptLibraries.pl2.useCases[0].polishedPrompt = `Build a habit tracker for everyday users that helps them build consistency by tracking up to 10 habits across a 7-day week, all within a single HTML file using vanilla JS. The project is for personal daily use on any device, and the user is typically someone trying to build routines who needs something lightweight and distraction-free. This project should fit the vibe of clean, minimal, and no-fuss. Include a row of Mon–Sun checkboxes per habit that triggers a streak badge when all 7 are checked, a Reset Week button that clears checkboxes while preserving habit names, and localStorage persistence so progress is never lost. Keep the design mobile-friendly using flexbox layout with no table elements, and make the core flow feel instant and satisfying so checking off habits feels rewarding rather than tedious.`;
 promptLibraries.pl2.useCases[0].idealResponse = `A clean app with a daily dashboard showing today's habits as tappable checkboxes. Each habit shows streak count. Habit creation: name, frequency (daily/weekly/custom), optional reminder time. A calendar heatmap shows completion history. Weekly and monthly summary cards show trends. The UI avoids red/failure states—missed days are grey, not alarming.`;
@@ -2356,6 +2424,321 @@ promptLibraries.pl2.useCases[0].badResponse.failsAt = [
   "No streak tracking",
   "No charts or heatmaps",
   "No reminders"
+];
+
+promptLibraries.pl2.useCases[1].label = "Task Management System";
+promptLibraries.pl2.useCases[1].polishedPrompt = `Build a task management system for students, professionals, and anyone juggling multiple areas of life that helps them cut through overwhelm and get clear on what actually needs to get done. The project is for daily personal use across school, work, and personal life, and the user is typically someone who feels overloaded and needs structure without added complexity. This project should fit the vibe of minimal, calm, and structured. Include task creation with priorities, due dates, tags, and subtasks, along with filtering and sorting options, recurring task support, and a quick-add input for low-friction capture; provide a clear daily and weekly view and optional calendar syncing. Make the core flow feel focused and effortless so users can understand their full workload at a single glance without feeling more stressed than when they started.`;
+promptLibraries.pl2.useCases[1].idealResponse = `A minimal task manager with a persistent quick-add bar (type + Enter to create in < 2 seconds). Tasks have priority indicators, due dates, and tags. Sidebar switches between Today, Upcoming, All Tasks. Filter/sort by tag, priority, or date. Subtasks expand inline. Recurring task option in creation modal. Optional Google Calendar sync.`;
+promptLibraries.pl2.useCases[1].criteria = [
+  "Task creation with priority, due date, tags, and subtasks",
+  "Quick-add input (keyboard shortcut or persistent bar)",
+  "Filtering and sorting by multiple criteria",
+  "Recurring task support",
+  "Daily and weekly view available",
+  "Optional calendar sync mentioned or implemented",
+  "Minimal interface — no unnecessary UI chrome",
+  "Workload is scannable at a glance"
+];
+promptLibraries.pl2.useCases[1].badResponse.text = `A task manager HTML table with columns: Task Name, Status, Priority, Due Date. Rows added by clicking Add Row. Sort by clicking column headers.`;
+promptLibraries.pl2.useCases[1].badResponse.failsAt = [
+  "Table has high friction — no quick-add, no daily view",
+  "No subtasks or tags",
+  "No filtering system",
+  "No recurring tasks",
+  "Feels like a spreadsheet not a task manager"
+];
+
+promptLibraries.pl2.useCases[2].label = "Personal Automation Tool";
+promptLibraries.pl2.useCases[2].polishedPrompt = `Build a personal automation tool for non-technical users who are curious about saving time that helps them create and manage simple workflows without needing to write code. The project is for everyday personal productivity use, and the user is typically someone who has heard of automation and wants quick, visible benefits without a steep learning curve. This project should fit the vibe of approachable, practical, and empowering. Include trigger-action workflow creation (when X happens, do Y), a library of pre-built templates for common tasks, a visual builder or simple configuration interface, a log of past automations and their outcomes, and clear actionable error handling. Make the core flow feel simple enough for beginners to get a working automation running in minutes while still offering enough customization to grow with the user over time.`;
+promptLibraries.pl2.useCases[2].idealResponse = `A visual workflow builder with an IF/THEN form selector. At least 5 pre-built templates. A log panel shows past runs with timestamps and success/fail status. Errors show plain-English explanations with a suggested fix. Beginners can activate a template in < 3 clicks; power users can modify conditions.`;
+promptLibraries.pl2.useCases[2].criteria = [
+  "Visual builder or form-based IF/THEN constructor (no raw code required)",
+  "At least 5 pre-built templates",
+  "Trigger types and action types clearly labeled",
+  "Log panel shows past runs with status and timestamps",
+  "Error messages in plain English with suggested next steps",
+  "Beginners can activate a template in under 3 clicks",
+  "Power users can customize trigger conditions",
+  "Mobile-accessible interface"
+];
+promptLibraries.pl2.useCases[2].badResponse.text = `Write a Python script using the requests library. Set up a cron job on your server to run it every hour. Use environment variables for your API keys.`;
+promptLibraries.pl2.useCases[2].badResponse.failsAt = [
+  "Requires coding — inaccessible for non-technical users",
+  "No visual builder, no templates, no UI",
+  "No log panel or error handling UI",
+  "Ignores the beginner audience requirement"
+];
+
+// ── pl3: Academic ───────────────────────────────────────────────────────────
+promptLibraries.pl3.useCases[0].label = "Flashcard Study App";
+promptLibraries.pl3.useCases[0].polishedPrompt = `Build a flashcard study app for students and self-learners that helps them memorize and retain information through an active, satisfying review loop, all within a single HTML file. The project is for personal study sessions on any device, and the user is typically someone cramming or building long-term recall who needs a focused, no-distraction tool. This project should fit the vibe of clean, tactile, and rewarding. Include a JS array of 5 sample cards with front and back values, a CSS 3D flip animation on click, a "Got it ✓" action that removes the card from the deck and a "Need Review ✗" action that sends it to the back of the queue, a progress bar showing X of Y cards remaining, and a completion screen with CSS-only confetti. Make the core flow feel snappy and motivating so each flip and sort feels like genuine progress toward mastery.`;
+promptLibraries.pl3.useCases[0].idealResponse = `Single HTML file with a JS array of ≥ 5 cards. CSS 3D flip animation on click. "Got it ✓" removes card from deck. "Need Review ✗" sends card to back of queue. Progress bar shows X of Y cards remaining. Completion screen when deck is empty. CSS-only confetti on completion. Mobile-friendly layout.`;
+promptLibraries.pl3.useCases[0].criteria = [
+  "Single HTML file with JS array of ≥ 5 cards (front + back)",
+  "CSS 3D flip animation on click",
+  "'Got it ✓' removes card from deck",
+  "'Need Review ✗' sends card to back of queue",
+  "Progress bar shows X of Y cards remaining",
+  "Completion screen when deck is empty",
+  "CSS-only confetti on completion",
+  "Mobile-friendly layout"
+];
+promptLibraries.pl3.useCases[0].badResponse.text = `All 5 cards displayed as static text on the page. Clicking a card shows the answer below it. No flipping, no remove/requeue, no progress tracking, no completion state.`;
+promptLibraries.pl3.useCases[0].badResponse.failsAt = [
+  "No flip animation",
+  "Cards just cycle, no remove/requeue logic",
+  "No progress bar",
+  "No completion screen or confetti",
+  "Static text list defeats active recall"
+];
+
+promptLibraries.pl3.useCases[1].label = "Student Project Management Tool";
+promptLibraries.pl3.useCases[1].polishedPrompt = `Build a project management tool specifically for students completing assignments or group projects that helps them break down large tasks, stay on track, and coordinate with teammates without feeling overwhelmed. The project is for academic use across individual and collaborative assignments, and the user is typically a student who struggles with where to start on big projects and loses track of deadlines and responsibilities when working in groups. This project should fit the vibe of structured, focused, and straightforward. Include milestone planning, task breakdown, deadlines, and progress tracking; support collaboration through shared boards or task lists; allow note-taking and file attachments; provide a timeline view for long-term planning; and make exporting or presenting the final work easy. Make the core flow feel organized and momentum-building so students always know exactly what to do next.`;
+promptLibraries.pl3.useCases[1].idealResponse = `A student-focused Kanban + timeline hybrid. Milestone creation with sub-tasks and deadlines, shared board view for group collaboration, a notes panel with rich text editing, file attachment support, and visual progress tracking. An Export button generates a clean summary. UI structured but not overwhelming.`;
+promptLibraries.pl3.useCases[1].criteria = [
+  "Milestone planning with sub-task breakdown and deadlines",
+  "Visual timeline or calendar view of milestones",
+  "Progress tracking shows completion % per milestone",
+  "Collaboration supports shared boards or task assignment",
+  "Notes panel with rich text or markdown editing",
+  "File attachment functionality present",
+  "Export feature produces a summary document",
+  "UI designed for students, not corporate PMs"
+];
+promptLibraries.pl3.useCases[1].badResponse.text = `Use Trello. Create a board with columns: To Do, In Progress, Done. Make cards for each task. Share the board with your group members.`;
+promptLibraries.pl3.useCases[1].badResponse.failsAt = [
+  "Just suggests an existing tool — no actual build",
+  "No timeline view",
+  "No notes or file attachments",
+  "No export feature"
+];
+
+promptLibraries.pl3.useCases[2].label = "Study Companion with Spaced Repetition";
+promptLibraries.pl3.useCases[2].polishedPrompt = `Build a study companion for exam-prep students that helps them actively review and retain information over time using methods that go well beyond passive rereading. The project is for focused study sessions leading up to tests or exams, and the user is typically someone who wants to study smarter and knows that just highlighting notes isn't working. This project should fit the vibe of interactive, intelligent, and efficient. Include flashcard creation, quizzes, and spaced repetition scheduling; allow users to upload notes or paste text to auto-generate study materials; track performance and surface weak areas; and provide targeted review sessions driven by past mistakes. Make the core flow feel dynamic and personalized so every study session feels like the most useful thing the user could be doing with their time.`;
+promptLibraries.pl3.useCases[2].idealResponse = `Pasting notes auto-generates a flashcard deck and practice quiz. Flashcards use spaced repetition (SM-2 algorithm) to schedule reviews. Quiz mode offers multiple choice, true/false, and short answer. A performance dashboard shows accuracy per topic and highlights weak areas. "Focus Session" auto-queues cards the student has struggled with.`;
+promptLibraries.pl3.useCases[2].criteria = [
+  "Flashcard creation (manual and from pasted notes)",
+  "Quiz mode with multiple question types",
+  "Spaced repetition scheduling implemented",
+  "Notes upload → auto-generate materials",
+  "Performance tracking with weak area identification",
+  "Targeted review sessions based on past mistakes",
+  "Interactive, engaging UX — not passive display"
+];
+promptLibraries.pl3.useCases[2].badResponse.text = `A flashcard app where you manually create cards and flip through them in random order. All cards shown every session regardless of performance.`;
+promptLibraries.pl3.useCases[2].badResponse.failsAt = [
+  "No spaced repetition — core requirement",
+  "No auto-generation from notes",
+  "No quiz mode",
+  "No performance tracking",
+  "Showing all cards defeats the entire point"
+];
+
+// ── pl4: Web & Data ─────────────────────────────────────────────────────────
+promptLibraries.pl4.useCases[0].label = "Web Scraping Tool";
+promptLibraries.pl4.useCases[0].polishedPrompt = `Build a robust web scraping tool for analysts, researchers, or developers that helps them collect structured, up-to-date data from a target website without tedious manual collection. The project is for repeated automated data gathering workflows, and the user is typically someone who needs fresh data on a regular cadence and can't afford to spend time pulling it by hand. This project should fit the vibe of reliable, efficient, and data-heavy. Include pagination and dynamic content loading support, data filtering, cleaning and normalization into a consistent schema, duplicate removal, and missing value handling; provide CSV and JSON export options and include thorough logging and error handling for failed requests. Make the core flow feel dependable and hands-off so users can run the tool with confidence and trust that what comes out the other end is clean and ready for analysis.`;
+promptLibraries.pl4.useCases[0].idealResponse = `A Python scraper using Playwright (for dynamic content) + BeautifulSoup. Accepts a target URL and CSS selectors via config. Handles multi-page pagination automatically. Deduplicates on a key field, fills missing values with nulls, normalizes strings. Outputs to CSV and JSON. Logging captures each request with URL, status code, items found, and errors. Failed requests retry 3× with exponential backoff.`;
+promptLibraries.pl4.useCases[0].criteria = [
+  "Handles pagination (multi-page scraping)",
+  "Handles dynamic content (JS-rendered pages)",
+  "Data normalized to a consistent schema",
+  "Duplicate removal logic present",
+  "Missing value handling documented",
+  "CSV and JSON export both available",
+  "Request logging with status and error details",
+  "Error handling with retry logic"
+];
+promptLibraries.pl4.useCases[0].badResponse.text = `Here is a requests.get() call that fetches one page and prints the raw HTML to the console.`;
+promptLibraries.pl4.useCases[0].badResponse.failsAt = [
+  "Fetches a single static page",
+  "Outputs raw HTML instead of structured data",
+  "No normalization, no dedup, no export",
+  "No error handling or logging"
+];
+
+promptLibraries.pl4.useCases[1].label = "Interactive Data Dashboard";
+promptLibraries.pl4.useCases[1].polishedPrompt = `Build an interactive data dashboard for business users, analysts, or team leads that helps them quickly understand patterns and make informed decisions without ever having to dig through raw data. The project is for internal reporting or data monitoring use, and the user is typically someone who needs to scan key metrics fast and communicate findings to others without getting lost in spreadsheets. This project should fit the vibe of clean, scannable, and data-heavy. Include summary metrics, charts, and tables; support filtering, date ranges, and segmentation; and surface key insights prominently at the top so the main story is immediately obvious. Keep the layout responsive across devices and make the core flow feel effortless and clear so users walk away with real understanding in under a minute.`;
+promptLibraries.pl4.useCases[1].idealResponse = `A React dashboard with 4 KPI summary cards at the top. Below: a line chart for trends over time, a bar chart for category comparison, and a sortable data table. A filter bar controls date range, segment, and metric — all charts update reactively. An "Insights" banner auto-generates 2-3 key findings. Responsive grid collapses gracefully to mobile.`;
+promptLibraries.pl4.useCases[1].criteria = [
+  "Summary metric cards visible at the top",
+  "At least 2 chart types (line, bar, pie, etc.)",
+  "Data table with sortable columns",
+  "Filtering and date range controls",
+  "Segmentation/dimension selector",
+  "Key insights highlighted prominently",
+  "Charts update reactively to filter changes",
+  "Responsive across mobile and desktop"
+];
+promptLibraries.pl4.useCases[1].badResponse.text = `A static HTML page showing a single bar chart image. The chart is a PNG that cannot be interacted with. No filters, no date range, no KPI cards, and no table.`;
+promptLibraries.pl4.useCases[1].badResponse.failsAt = [
+  "Static image — opposite of interactive",
+  "No filtering, date range, or segmentation",
+  "No KPI cards, no table",
+  "No insights"
+];
+
+promptLibraries.pl4.useCases[2].label = "Workflow Automation Bot";
+promptLibraries.pl4.useCases[2].polishedPrompt = `Build a workflow automation bot for teams on platforms like Slack that helps them eliminate repetitive manual follow-ups and stay coordinated without adding friction to their existing processes. The project is for internal team use in a collaborative work environment, and the user is typically a team that wastes time on routine check-ins, reminders, and status updates that could easily be handled automatically. This project should fit the vibe of lightweight, reliable, and no-nonsense. Include support for slash commands, scheduled actions, and event-based triggers; integrate with external tools where needed; provide clear concise responses; and include logs or summaries of actions taken so the team always knows what the bot has done. Make the core flow feel seamless and invisible so the bot handles the busywork quietly and the team spends more time on work that actually matters.`;
+promptLibraries.pl4.useCases[2].idealResponse = `A Slack bot using Bolt SDK supporting slash commands (/standup, /assign, /status), scheduled daily digests, and event triggers (new message in #bugs → create Jira ticket). Each bot response is ≤ 3 lines with one clear CTA. Integrates with Jira, Google Calendar, and GitHub via OAuth. Admin panel shows a log of all bot actions.`;
+promptLibraries.pl4.useCases[2].criteria = [
+  "Slash command support (≥ 3 commands)",
+  "Scheduled actions (time-based triggers)",
+  "Event-based triggers (react to messages or events)",
+  "Responses are concise (≤ 3 lines)",
+  "External tool integration mentioned or implemented",
+  "Action log or summary available",
+  "Clear setup instructions included"
+];
+promptLibraries.pl4.useCases[2].badResponse.text = `A bot that responds to every message in every channel with 'I am a bot. Please see your admin for help.' No commands, no scheduling, no integrations, no logs.`;
+promptLibraries.pl4.useCases[2].badResponse.failsAt = [
+  "No slash commands",
+  "No scheduled actions or event triggers",
+  "No external integrations",
+  "No logs",
+  "Bot adds friction instead of removing it"
+];
+
+// ── pl5: Finance ────────────────────────────────────────────────────────────
+promptLibraries.pl5.useCases[0].label = "Investment Portfolio Tracker";
+promptLibraries.pl5.useCases[0].polishedPrompt = `Build an investment tracking tool for individual investors and finance-minded users that helps them monitor and analyze their portfolio performance in one clear, organized place. The project is for personal finance management and regular portfolio review, and the user is typically someone actively managing holdings who wants precise, interpretable data without having to jump between brokerage accounts or spreadsheets. This project should fit the vibe of precise, polished, and data-heavy. Include holdings tracking, allocation breakdowns, gains and losses, historical performance, trend charts, risk and diversification summaries, and easy asset management. Make the core flow feel structured and trustworthy so users can assess the health of their portfolio at a glance and make confident, informed decisions.`;
+promptLibraries.pl5.useCases[0].idealResponse = `Holdings table with ticker, shares, cost basis, current value, gain/loss. Allocation breakdown chart (pie, donut, or bar). Historical performance chart over time. Total portfolio value and total gain/loss summary. Risk or diversification summary present. Add/edit/remove holdings functionality. Real or mock market data integration. Clean, scannable, data-heavy layout.`;
+promptLibraries.pl5.useCases[0].criteria = [
+  "Holdings table with ticker, shares, cost basis, current value, gain/loss",
+  "Allocation breakdown chart (pie, donut, or bar)",
+  "Historical performance chart over time",
+  "Total portfolio value and total gain/loss summary",
+  "Risk or diversification summary present",
+  "Add/edit/remove holdings functionality",
+  "Real or mock market data integration",
+  "Clean, scannable, data-heavy layout"
+];
+promptLibraries.pl5.useCases[0].badResponse.text = `A simple HTML table with two columns: Ticker and Shares. No prices, no charts, no gain/loss calculations, and no way to add or edit holdings.`;
+promptLibraries.pl5.useCases[0].badResponse.failsAt = [
+  "Just a list of tickers with no values",
+  "No allocation or performance charts",
+  "No gain/loss calculation",
+  "No risk summary",
+  "No asset management UI"
+];
+
+promptLibraries.pl5.useCases[1].label = "Budgeting App";
+promptLibraries.pl5.useCases[1].polishedPrompt = `Build a budgeting application for everyday users that helps them take control of their income, expenses, and savings goals without feeling overwhelmed by their own finances. The project is for personal day-to-day financial management, and the user is typically someone who wants to spend more intentionally but struggles to see where their money actually goes each month. This project should fit the vibe of simple, clear, and supportive. Include income tracking, expense categorization, monthly summaries, visual spending breakdowns, savings goal tracking, and overspending alerts. Make the core flow feel encouraging and transparent so users finish each session feeling more in control rather than stressed about their finances.`;
+promptLibraries.pl5.useCases[1].idealResponse = `A React app with a transaction log (date, amount, category, note), CSV import with auto-detect columns, and category budget cards showing spent/remaining with a progress bar. Alerts at 80% and 100% of budget. Monthly summary shows total in/out and net savings. A chart shows spending trends over 3-6 months. Recurring transactions auto-populate on schedule.`;
+promptLibraries.pl5.useCases[1].criteria = [
+  "Transaction entry: manual input with date, amount, category, note",
+  "CSV import with auto-column detection",
+  "Category budget limits with spent/remaining display",
+  "Alert or visual warning at budget threshold",
+  "Monthly summary (income, expenses, net savings)",
+  "Trend chart spanning multiple months",
+  "Recurring transaction support",
+  "Data persists across sessions"
+];
+promptLibraries.pl5.useCases[1].badResponse.text = `A spreadsheet template in Google Sheets with columns for date, amount, and category. Use SUM formulas to total your expenses.`;
+promptLibraries.pl5.useCases[1].badResponse.failsAt = [
+  "A template, not a built app",
+  "No CSV import",
+  "No budget limits or alerts",
+  "No charts or trends",
+  "No recurring transactions"
+];
+
+promptLibraries.pl5.useCases[2].label = "Trading Simulator";
+promptLibraries.pl5.useCases[2].polishedPrompt = `Build a trading simulator for aspiring traders and finance learners that helps them test and refine investment strategies using simulated funds without any real financial risk. The project is for self-directed learning and strategy experimentation, and the user is typically someone curious about markets who wants to build intuition and skill before committing real money. This project should fit the vibe of structured, insight-driven, and data-focused rather than gamified. Include paper trading with real or historical market data, trade and performance metric tracking, strategy outcome analysis, side-by-side strategy comparison, and profit and loss visualizations over time. Make the core flow feel analytical and educational so users come away with genuine insight into what works, what doesn't, and why.`;
+promptLibraries.pl5.useCases[2].idealResponse = `Paper trading with simulated funds. Real or historical market data integration. Trade execution and full trade history log. Performance metrics (P&L, win rate, returns). Strategy outcome analysis with key statistics. Side-by-side strategy comparison view. Ability to add and remove stocks. Simulation mode available.`;
+promptLibraries.pl5.useCases[2].criteria = [
+  "Paper trading with simulated funds",
+  "Real or historical market data integration",
+  "Trade execution and full trade history log",
+  "Performance metrics (P&L, win rate, returns)",
+  "Strategy outcome analysis with key statistics",
+  "Side-by-side strategy comparison view",
+  "Ability to add a stock",
+  "Ability to remove a stock",
+  "Ability to simulate"
+];
+promptLibraries.pl5.useCases[2].badResponse.text = `A button that randomly increases or decreases your fake balance with flashy animations and a leaderboard. No real market data, no trade history, no performance analytics, no strategy comparison.`;
+promptLibraries.pl5.useCases[2].badResponse.failsAt = [
+  "No historical or live market data",
+  "No trade history log",
+  "No performance metrics beyond final balance",
+  "No strategy comparison view",
+  "Gamified UI contradicts educational vibe"
+];
+
+// ── pl6: Health ─────────────────────────────────────────────────────────────
+promptLibraries.pl6.useCases[0].label = "Personal Health & Wellness Dashboard";
+promptLibraries.pl6.useCases[0].polishedPrompt = `Build a personal health and wellness dashboard for health-conscious users that helps them track and visualize their key daily habits in one unified place without it feeling like a chore. The project is for daily personal use on any device, and the user is typically someone trying to build healthier routines who needs logging to be fast enough that they'll actually stick with it. This project should fit the vibe of clean, motivating, and data-light. Include sleep tracking (hours per night and quality), steps and activity (daily count and weekly goal), water intake (daily cups and streak), and mood logging (emoji-based across 5 levels); show trend charts per metric, an overall Wellness Score from 0 to 100, and localStorage persistence. Make the core flow feel so fast and frictionless that users can log today's full data in under 30 seconds.`;
+promptLibraries.pl6.useCases[0].idealResponse = `A card-based dark dashboard. Each card shows today's value, a mini trend chart, and delta vs. last week. Top summary bar shows overall Wellness Score. Clicking any card opens a modal with a 30-day chart and a log form. A 'Log Today' floating button opens a quick-entry form covering all metrics. Data persists in localStorage.`;
+promptLibraries.pl6.useCases[0].criteria = [
+  "All 4 metrics displayed: sleep, steps, water, mood",
+  "Trend chart per metric (7-30 days)",
+  "Overall Wellness Score computed and displayed",
+  "Delta vs. last week shown on each card",
+  "'Log Today' flow takes under 30 seconds",
+  "Modal with 30-day chart per metric",
+  "Data persists across sessions (localStorage)",
+  "Handles fewer than 3 data points gracefully"
+];
+promptLibraries.pl6.useCases[0].badResponse.text = `A health app. Enter your sleep hours in a text box. Enter your steps. Click Save. Your data is shown in a list below.`;
+promptLibraries.pl6.useCases[0].badResponse.failsAt = [
+  "No charts or trend visualization",
+  "No Wellness Score",
+  "No delta comparison",
+  "Logging is friction-heavy",
+  "No data persistence"
+];
+
+promptLibraries.pl6.useCases[1].label = "Calorie & Macro Tracker";
+promptLibraries.pl6.useCases[1].polishedPrompt = `Build a calorie and macro tracker for nutrition-focused users that helps them log meals and stay on top of their daily and weekly nutritional targets with precision and without friction. The project is for daily diet tracking, and the user is typically someone with specific fitness or health goals who wants detailed nutritional data without manually calculating everything themselves. This project should fit the vibe of precise, structured, and data-heavy. Include customizable daily targets for calories, protein, carbs, fat, and fiber; food logging by name with manual macro entry or Open Food Facts API search by name or barcode; meal type categorization (Breakfast, Lunch, Dinner, Snack) with serving size and auto-calculated macros; a daily view with macro progress bars, a circular calorie ring, and a meal-grouped log; a weekly view with a stacked macro bar chart and calorie vs goal line chart; a nutrition summary donut chart; the ability to copy yesterday's meals to today; a custom food library; CSV export; and streaks for hitting daily protein goals. Make the core flow feel thorough yet fast so power users can log a full meal in seconds.`;
+promptLibraries.pl6.useCases[1].idealResponse = `Customizable daily targets (calories, protein, carbs, fat, fiber). Open Food Facts API search by name and barcode. Manual macro entry for unlisted foods. Meal categorization (Breakfast, Lunch, Dinner, Snack). Serving size with auto-calculated macros. Daily view: circular calorie ring + macro progress bars + meal-grouped log. Weekly view: stacked macro bar chart + calorie vs goal line chart. Nutrition summary donut chart. Copy yesterday's meals to today. Custom food library. CSV export. Protein-goal streak counter.`;
+promptLibraries.pl6.useCases[1].criteria = [
+  "Customizable daily targets (calories, protein, carbs, fat, fiber)",
+  "Open Food Facts API search by name and barcode",
+  "Manual macro entry for unlisted foods",
+  "Meal categorization (Breakfast, Lunch, Dinner, Snack)",
+  "Serving size with auto-calculated macros",
+  "Daily view: circular calorie ring + macro progress bars + meal-grouped log",
+  "Weekly view: stacked macro bar chart + calorie vs goal line chart",
+  "Nutrition summary donut chart",
+  "Copy yesterday's meals to today",
+  "Custom food library",
+  "CSV export",
+  "Protein-goal streak counter"
+];
+promptLibraries.pl6.useCases[1].badResponse.text = `A form with one text input for 'food' and one for 'calories'. Submissions appear in a list. No macros beyond calories, no API search, no charts, no meal grouping, no library.`;
+promptLibraries.pl6.useCases[1].badResponse.failsAt = [
+  "No API integration — manual entry only",
+  "No meal categorization",
+  "No charts of any kind",
+  "No copy-yesterday feature",
+  "No custom library or export"
+];
+
+promptLibraries.pl6.useCases[2].label = "Workout Logger with Progress Charts";
+promptLibraries.pl6.useCases[2].polishedPrompt = `Build a workout logging app for strength training enthusiasts that helps them track sessions, monitor progressive overload, and celebrate personal records in one structured, always-available tool. The project is for use during and after gym sessions, and the user is typically someone following a structured training program who wants to stop relying on notes apps or paper logs and start seeing their progress visualized clearly over time. This project should fit the vibe of focused, data-heavy, and motivating. Include customizable workout templates with ordered exercises and default sets, reps, and rest times; an active session mode with per-set weight and reps entry, auto-starting rest timers, and auto-save as you go; an exercise detail view with a max weight line chart, volume chart, and PR badge with celebration animation; a calendar heatmap of training days; monthly stats including total sessions, total volume, and most trained muscle groups; superset support; per-session notes; a built-in exercise library with muscle group tags; and CSV export. Make the core flow feel seamless and rewarding so logging a session mid-workout never breaks focus and checking progress afterward always feels worth it.`;
+promptLibraries.pl6.useCases[2].idealResponse = `Customizable workout templates with ordered exercises and default sets/reps/rest. Active session mode with per-set weight + reps entry. Auto-starting rest timer after each set. Autosave during session. Exercise detail view with max weight line chart and volume chart. PR badge with celebration animation on new record. Calendar heatmap of training days. Monthly stats: sessions, volume, top muscle groups. Superset support. Per-session notes. Exercise library tagged by muscle group. CSV export.`;
+promptLibraries.pl6.useCases[2].criteria = [
+  "Customizable workout templates with ordered exercises and default sets/reps/rest",
+  "Active session mode with per-set weight + reps entry",
+  "Auto-starting rest timer after each set",
+  "Autosave during session",
+  "Exercise detail view with max weight line chart and volume chart",
+  "PR badge with celebration animation on new record",
+  "Calendar heatmap of training days",
+  "Monthly stats: sessions, volume, top muscle groups",
+  "Superset support",
+  "Per-session notes",
+  "Exercise library tagged by muscle group",
+  "CSV export"
+];
+promptLibraries.pl6.useCases[2].badResponse.text = `A form to enter exercise name, weight, and reps for each set. Click Save when done. No templates, no rest timer, no charts, no progress tracking, no PR detection.`;
+promptLibraries.pl6.useCases[2].badResponse.failsAt = [
+  "No templates — every exercise entered manually each session",
+  "No rest timer",
+  "No autosave — risk of losing data mid-workout",
+  "No charts or PR tracking",
+  "No heatmap or monthly stats"
 ];
 
 

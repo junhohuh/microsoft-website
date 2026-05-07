@@ -1,0 +1,321 @@
+﻿1. Example 
+   1. Prompt Name
+      1. Exact Prompt
+         1. Ideal Response
+            1. Eval Criteria
+               1. Bad Response 
+                  1. Example Bad response 
+2. Creative and Social
+   1.   Personal Portfolio Site
+      1. Build a personal portfolio site for a developer or creative professional that helps them showcase their work and make a strong first impression. The project is for a personal domain or GitHub Pages deployment, and the user is typically job-seeking or freelancing and wants to stand out with a polished online presence. This project should fit the vibe of dark, sleek, and professional. Include smooth scrolling between a Hero section (name, one-line role, and CTA button), an About section (bio and skills grid), a Projects card grid, and a Contact form; the project grid should be 3 columns on desktop, 2 on tablet, and 1 on mobile, with each card showing a cover image, title, tech stack as pill badges, and a short description that reveals GitHub and Live links behind a semi-transparent dark hover overlay. Keep the design mobile-first with a sticky blur-backdrop nav, staggered fade-up card animations on scroll, and a dark/light mode toggle that persists in localStorage.
+         1. Delivers a fully functional dark-themed portfolio with responsive 3/2/1 column grid, hover overlay on project cards, smooth scroll navigation, sticky blurred nav, working dark/light toggle stored in localStorage, and staggered fade-up scroll animations. All sections (Hero, About, Projects, Contact) present and styled.
+            1. ✓Dark theme implemented (#0f0f0f bg, #e8e8e8 text)
+            2. ✓All 4 sections present: Hero, About, Projects, Contact
+            3. ✓Responsive grid: 3 col desktop → 2 tablet → 1 mobile
+            4. ✓Project card shows image, title, tech pills, description
+            5. ✓Hover overlay reveals GitHub + Live links on cards
+            6. ✓Staggered fade-up animation on scroll into view
+            7. ✓Sticky nav with backdrop-blur
+            8. ✓Dark/light mode toggle persists in localStorage
+            9. ✓Smooth scrolling between sections
+            10. ✓Contact form present and functional
+               1. ✗No responsive grid (fails #3)
+               2. ✗Missing hover overlay (fails #5)
+               3. ✗No animations (fails #6)
+               4. ✗No localStorage toggle (fails #8)
+               5. ✗Missing sections (fails #2
+                  1. "Creates a basic static HTML page with just a name and links list. No grid layout, no animations, no project cards with hover effects, no dark/light toggle."
+   2.   Personal Project Landing Page
+      1. Build a startup landing page for a founder or indie maker that helps them generate waitlist signups and communicate product value at a glance. The project is for a public-facing marketing site, and the user is typically launching an early-stage product and needs to build credibility fast. This project should fit the vibe of bold, conversion-focused, and polished. Include a Hero with a bold headline, subheading, and hero screenshot; a social proof bar with 5 company logos; a 3-column grid of 6 feature cards; a 3-step horizontal "How it Works" flow; and a 3-tier pricing section (Free, Pro, Enterprise) with the middle tier visually distinguished as "Most Popular." Make the core flow feel trustworthy and exciting, with a waitlist form that triggers a confetti animation on successful submit and a live social proof counter. Keep the design fully mobile responsive.
+         1. All 6 sections present in correct order. Hero includes CTA button + product mockup. Social proof bar with logos. Features grid: 3 columns, 6 cards with icons + descriptions. How It Works: 3 numbered steps with connectors. Pricing: 3 cards, middle card elevated + "Most Popular" badge. Confetti fires on form submit. Fully responsive.
+            1. ✓All 6 sections present in correct order
+            2. ✓Hero has headline, subheading, CTA + mockup
+            3. ✓Social proof bar with logos and label
+            4. ✓Features: 3-column grid, 6 cards
+            5. ✓How It Works: 3 steps with visual connector
+            6. ✓Pricing: 3 tiers, middle card has "Most Popular" treatment
+            7. ✓Confetti animation fires on form submit
+            8. ✓Fully mobile responsive
+               1. ✗Missing 5 of 6 sections
+               2. ✗No pricing tiers (fails #6)
+               3. ✗No confetti (fails #7)
+               4. ✗No social proof bar (fails #3)
+                  1. "Returns a single hero section with a headline and one button. No pricing, no features section, no confetti, no social proof."
+   3.  Karaoke Web App
+      1. Build a karaoke web app for party hosts and casual singers that helps them search songs, manage a performance queue, and sing along in real time without needing dedicated hardware. The project is for in-person social settings like house parties or small events, and the user is usually a group of friends who want a fun, low-friction karaoke experience from any browser. This project should fit the vibe of playful, energetic, and easy to pick up. Include a searchable song database (mock data is fine), a live queue system, synchronized lyrics display, and a performance mode with large readable text optimized for singing from a distance; add optional scoring and support for both solo and group use. Make the core flow feel fast and fun so transitions between songs and singers stay seamless. 
+         1. A web app with a search bar connected to a mock song database (10+ songs), a drag-reorderable queue, a full-screen lyrics display mode with synchronized scrolling, and a clean performance UI with large font. Scoring or fun feedback present. Design readable at distance for group use.
+            1. ✓Song search with real or mock database of ≥ 10 songs
+            2. ✓Queue system: add, remove, reorder songs
+            3. ✓Lyrics display synchronized during playback
+            4. ✓Performance mode fills screen with large, high-contrast text
+            5. ✓Optional scoring or feedback element included
+            6. ✓Design works for group viewing (readable from distance)
+            7. ✓Switching between queue songs is seamless
+               1. ✗No queue system (fails #2)
+               2. ✗Lyrics static, not synchronized (fails #3)
+               3. ✗Small div unusable for group viewing (fails #4, #6)
+               4. ✗No searchable database (fails #1)
+               5. ✗No scoring (fails #5)
+                  1. "Here is a karaoke app. It plays a YouTube video. The lyrics are shown below in a small div. Users type in the song name in a text box."
+3. Productivity
+   1.   Habit Tracker App
+      1. Build a habit tracker for everyday users that helps them build consistency by tracking up to 10 habits across a 7-day week, all within a single HTML file using vanilla JS. The project is for personal daily use on any device, and the user is typically someone trying to build routines who needs something lightweight and distraction-free. This project should fit the vibe of clean, minimal, and no-fuss. Include a row of Mon–Sun checkboxes per habit that triggers a streak badge when all 7 are checked, a Reset Week button that clears checkboxes while preserving habit names, and localStorage persistence so progress is never lost. Keep the design mobile-friendly using flexbox layout with no table elements, and make the core flow feel instant and satisfying so checking off habits feels rewarding rather than tedious.
+         1. A clean app with a daily dashboard showing today's habits as tappable checkboxes. Each habit shows streak count. Habit creation: name, frequency (daily/weekly/custom), optional reminder time. A calendar heatmap shows completion history. Weekly and monthly summary cards show trends. The UI avoids red/failure states—missed days are grey, not alarming.
+            1. ✓Habit creation with flexible frequency options
+            2. ✓Daily check-in UI (one-tap or minimal friction)
+            3. ✓Streak counter visible per habit
+            4. ✓Weekly and monthly summary views
+            5. ✓Visual progress (heatmap, chart, or graph)
+            6. ✓Customizable reminder system
+            7. ✓Non-shaming visual language for missed days
+            8. ✓Logging interaction takes ≤ 5 seconds
+               1. ✗Red highlighting creates guilt the prompt wanted to avoid (fails #7)
+               2. ✗Manual form entry contradicts quick logging (fails #8)
+               3. ✗No streak tracking (fails #3)
+               4. ✗No charts or heatmaps (fails #5)
+               5. ✗No reminders (fails #6)
+                  1. "A habit tracker with a table showing each day of the month. Missed days highlighted in red. Open a separate form to log each habit, entering date and habit name manually."
+   2.   Task Management System
+      1. Build a task management system for students, professionals, and anyone juggling multiple areas of life that helps them cut through overwhelm and get clear on what actually needs to get done. The project is for daily personal use across school, work, and personal life, and the user is typically someone who feels overloaded and needs structure without added complexity. This project should fit the vibe of minimal, calm, and structured. Include task creation with priorities, due dates, tags, and subtasks, along with filtering and sorting options, recurring task support, and a quick-add input for low-friction capture; provide a clear daily and weekly view and optional calendar syncing. Make the core flow feel focused and effortless so users can understand their full workload at a single glance without feeling more stressed than when they started.
+         1. A minimal task manager with a persistent quick-add bar (type + Enter to create in < 2 seconds). Tasks have priority indicators, due dates, and tags. Sidebar switches between Today, Upcoming, All Tasks. Filter/sort by tag, priority, or date. Subtasks expand inline. Recurring task option in creation modal. Optional Google Calendar sync.
+            1. ✓Task creation with priority, due date, tags, and subtasks
+            2. ✓Quick-add input (keyboard shortcut or persistent bar)
+            3. ✓Filtering and sorting by multiple criteria
+            4. ✓Recurring task support
+            5. ✓Daily and weekly view available
+            6. ✓Optional calendar sync mentioned or implemented
+            7. ✓Minimal interface — no unnecessary UI chrome
+            8. ✓Workload is scannable at a glance
+               1. ✗Table has high friction — no quick-add, no daily view (fails #2, #5)
+               2. ✗No subtasks or tags (fails #1)
+               3. ✗No filtering system (fails #3)
+               4. ✗No recurring tasks (fails #4)
+               5. ✗Feels like a spreadsheet not a task manager (fails #7)
+                  1. "A task manager HTML table with columns: Task Name, Status, Priority, Due Date. Rows added by clicking Add Row. Sort by clicking column headers."
+   3.  Personal Automation Tool
+      1. Build a personal automation tool for non-technical users who are curious about saving time that helps them create and manage simple workflows without needing to write code. The project is for everyday personal productivity use, and the user is typically someone who has heard of automation and wants quick, visible benefits without a steep learning curve. This project should fit the vibe of approachable, practical, and empowering. Include trigger-action workflow creation (when X happens, do Y), a library of pre-built templates for common tasks, a visual builder or simple configuration interface, a log of past automations and their outcomes, and clear actionable error handling. Make the core flow feel simple enough for beginners to get a working automation running in minutes while still offering enough customization to grow with the user over time. 
+         1. A visual workflow builder with an IF/THEN form selector. At least 5 pre-built templates. A log panel shows past runs with timestamps and success/fail status. Errors show plain-English explanations with a suggested fix. Beginners can activate a template in < 3 clicks; power users can modify conditions.
+            1. ✓Visual builder or form-based IF/THEN constructor (no raw code required)
+            2. ✓At least 5 pre-built templates
+            3. ✓Trigger types and action types clearly labeled
+            4. ✓Log panel shows past runs with status and timestamps
+            5. ✓Error messages in plain English with suggested next steps
+            6. ✓Beginners can activate a template in under 3 clicks
+            7. ✓Power users can customize trigger conditions
+            8. ✓Mobile-accessible interface
+               1. ✗Requires coding — inaccessible for non-technical users (fails #1, #6)
+               2. ✗No visual builder, no templates, no UI (fails #1, #2)
+               3. ✗No log panel or error handling UI (fails #4, #5)
+               4. ✗Ignores the beginner audience requirement
+                  1. "Write a Python script using the requests library. Set up a cron job on your server to run it every hour. Use environment variables for your API keys."
+4. Academic
+   1.   Flashcard Study App
+      1. Build a flashcard study app for students and self-learners that helps them memorize and retain information through an active, satisfying review loop, all within a single HTML file. The project is for personal study sessions on any device, and the user is typically someone cramming or building long-term recall who needs a focused, no-distraction tool. This project should fit the vibe of clean, tactile, and rewarding. Include a JS array of 5 sample cards with front and back values, a CSS 3D flip animation on click, a "Got it ✓" action that removes the card from the deck and a "Need Review ✗" action that sends it to the back of the queue, a progress bar showing X of Y cards remaining, and a completion screen with CSS-only confetti. Make the core flow feel snappy and motivating so each flip and sort feels like genuine progress toward mastery.
+         1. Add Flashcard
+         2. Be able to type to create flashcard
+         3. ✓ Single HTML file with JS array of ≥ 5 cards (front + back)
+         4. ✓ CSS 3D flip animation on click
+         5. ✓ "Got it ✓" removes card from deck
+         6. ✓ "Need Review ✗" sends card to back of queue
+         7. ✓ Progress bar shows X of Y cards remaining
+         8. ✓ Completion screen when deck is empty
+         9. ✓ CSS-only confetti on completion
+         10. ✓ Mobile-friendly layout
+            1. ✗ No flip animation (fails #2)
+            2. ✗ Cards just cycle, no remove/requeue logic (fails #3, #4)
+            3. ✗ No progress bar (fails #5)
+            4. ✗ No completion screen or confetti (fails #6, #7)
+            5. ✗ Static text list defeats active recall
+               1. "All 5 cards displayed as static text on the page. Clicking a card shows the answer below it. No flipping, no remove/requeue, no progress tracking, no completion state."
+   2.  Student Project Management Tool
+      1. Build a project management tool specifically for students completing assignments or group projects that helps them break down large tasks, stay on track, and coordinate with teammates without feeling overwhelmed. The project is for academic use across individual and collaborative assignments, and the user is typically a student who struggles with where to start on big projects and loses track of deadlines and responsibilities when working in groups. This project should fit the vibe of structured, focused, and straightforward. Include milestone planning, task breakdown, deadlines, and progress tracking; support collaboration through shared boards or task lists; allow note-taking and file attachments; provide a timeline view for long-term planning; and make exporting or presenting the final work easy. Make the core flow feel organized and momentum-building so students always know exactly what to do next.
+         1. A student-focused Kanban + timeline hybrid. Milestone creation with sub-tasks and deadlines, shared board view for group collaboration, a notes panel with rich text editing, file attachment support, and visual progress tracking. An Export button generates a clean summary. UI structured but not overwhelming.
+            1. ✓Milestone planning with sub-task breakdown and deadlines
+            2. ✓Visual timeline or calendar view of milestones
+            3. ✓Progress tracking shows completion % per milestone
+            4. ✓Collaboration supports shared boards or task assignment
+            5. ✓Notes panel with rich text or markdown editing
+            6. ✓File attachment functionality present
+            7. ✓Export feature produces a summary document
+            8. ✓UI designed for students, not corporate PMs
+               1. ✗Just suggests an existing tool — no actual build
+               2. ✗No timeline view (fails #2)
+               3. ✗No notes or file attachments (fails #5, #6)
+               4. ✗No export feature (fails #7)
+                  1. "Use Trello. Create a board with columns: To Do, In Progress, Done. Make cards for each task. Share the board with your group members."
+   3. Study Companion with Spaced Repetition
+      1. Build a study companion for exam-prep students that helps them actively review and retain information over time using methods that go well beyond passive rereading. The project is for focused study sessions leading up to tests or exams, and the user is typically someone who wants to study smarter and knows that just highlighting notes isn't working. This project should fit the vibe of interactive, intelligent, and efficient. Include flashcard creation, quizzes, and spaced repetition scheduling; allow users to upload notes or paste text to auto-generate study materials; track performance and surface weak areas; and provide targeted review sessions driven by past mistakes. Make the core flow feel dynamic and personalized so every study session feels like the most useful thing the user could be doing with their time.
+         1. Pasting notes auto-generates a flashcard deck and practice quiz. Flashcards use spaced repetition (SM-2 algorithm) to schedule reviews. Quiz mode offers multiple choice, true/false, and short answer. A performance dashboard shows accuracy per topic and highlights weak areas. "Focus Session" auto-queues cards the student has struggled with.
+            1. ✓Flashcard creation (manual and from pasted notes)
+            2. ✓Quiz mode with multiple question types
+            3. ✓Spaced repetition scheduling implemented
+            4. ✓Notes upload → auto-generate materials
+            5. ✓Performance tracking with weak area identification
+            6. ✓Targeted review sessions based on past mistakes
+            7. ✓Interactive, engaging UX — not passive display
+               1. ✗No spaced repetition — core requirement (fails #3)
+               2. ✗No auto-generation from notes (fails #4)
+               3. ✗No quiz mode (fails #2)
+               4. ✗No performance tracking (fails #5)
+               5. ✗Showing all cards defeats the entire point (fails #6)
+                  1. "A flashcard app where you manually create cards and flip through them in random order. All cards shown every session regardless of performance."
+5. Web and Data
+   1.   Web Scraping Tool
+      1. Build a robust web scraping tool for analysts, researchers, or developers that helps them collect structured, up-to-date data from a target website without tedious manual collection. The project is for repeated automated data gathering workflows, and the user is typically someone who needs fresh data on a regular cadence and can't afford to spend time pulling it by hand. This project should fit the vibe of reliable, efficient, and data-heavy. Include pagination and dynamic content loading support, data filtering, cleaning and normalization into a consistent schema, duplicate removal, and missing value handling; provide CSV and JSON export options and include thorough logging and error handling for failed requests. Make the core flow feel dependable and hands-off so users can run the tool with confidence and trust that what comes out the other end is clean and ready for analysis.
+         1. A Python scraper using Playwright (for dynamic content) + BeautifulSoup. Accepts a target URL and CSS selectors via config. Handles multi-page pagination automatically. Deduplicates on a key field, fills missing values with nulls, normalizes strings. Outputs to CSV and JSON. Logging captures each request with URL, status code, items found, and errors. Failed requests retry 3× with exponential backoff.
+            1. ✓Handles pagination (multi-page scraping)
+            2. ✓Handles dynamic content (JS-rendered pages)
+            3. ✓Data normalized to a consistent schema
+            4. ✓Duplicate removal logic present
+            5. ✓Missing value handling documented
+            6. ✓CSV and JSON export both available
+            7. ✓Request logging with status and error details
+            8. ✓Error handling with retry logic
+               1. ✗Fetches a single static page (fails #1, #2)
+               2. ✗Outputs raw HTML instead of structured data (fails #3)
+               3. ✗No normalization, no dedup, no export (fails #3, #4, #6)
+               4. ✗No error handling or logging (fails #7, #8)
+                  1. "Here is a requests.get() call that fetches one page and prints the raw HTML to the console."
+   2.   Interactive Data Dashboard
+      1. Build an interactive data dashboard for business users, analysts, or team leads that helps them quickly understand patterns and make informed decisions without ever having to dig through raw data. The project is for internal reporting or data monitoring use, and the user is typically someone who needs to scan key metrics fast and communicate findings to others without getting lost in spreadsheets. This project should fit the vibe of clean, scannable, and data-heavy. Include summary metrics, charts, and tables; support filtering, date ranges, and segmentation; and surface key insights prominently at the top so the main story is immediately obvious. Keep the layout responsive across devices and make the core flow feel effortless and clear so users walk away with real understanding in under a minute.
+         1. A React dashboard with 4 KPI summary cards at the top. Below: a line chart for trends over time, a bar chart for category comparison, and a sortable data table. A filter bar controls date range, segment, and metric — all charts update reactively. An "Insights" banner auto-generates 2-3 key findings. Responsive grid collapses gracefully to mobile.
+            1. ✓Summary metric cards visible at the top
+            2. ✓At least 2 chart types (line, bar, pie, etc.)
+            3. ✓Data table with sortable columns
+            4. ✓Filtering and date range controls
+            5. ✓Segmentation/dimension selector
+            6. ✓Key insights highlighted prominently
+            7. ✓Charts update reactively to filter changes
+            8. ✓Responsive across mobile and desktop
+               1. ✗Static image — opposite of interactive (fails all interactive criteria)
+               2. ✗No filtering, date range, or segmentation (fails #4, #5)
+               3. ✗No KPI cards, no table (fails #1, #3)
+               4. ✗No insights (fails #6)
+                  1. "A static HTML page showing a single bar chart image. The chart is a PNG that cannot be interacted with. No filters, no date range, no KPI cards, and no table."
+   3.  Workflow Automation Bot
+      1. Build a workflow automation bot for teams on platforms like Slack that helps them eliminate repetitive manual follow-ups and stay coordinated without adding friction to their existing processes. The project is for internal team use in a collaborative work environment, and the user is typically a team that wastes time on routine check-ins, reminders, and status updates that could easily be handled automatically. This project should fit the vibe of lightweight, reliable, and no-nonsense. Include support for slash commands, scheduled actions, and event-based triggers; integrate with external tools where needed; provide clear concise responses; and include logs or summaries of actions taken so the team always knows what the bot has done. Make the core flow feel seamless and invisible so the bot handles the busywork quietly and the team spends more time on work that actually matters.
+         1. A Slack bot using Bolt SDK supporting slash commands (/standup, /assign, /status), scheduled daily digests, and event triggers (new message in #bugs → create Jira ticket). Each bot response is ≤ 3 lines with one clear CTA. Integrates with Jira, Google Calendar, and GitHub via OAuth. Admin panel shows a log of all bot actions.
+            1. ✓Slash command support (≥ 3 commands)
+            2. ✓Scheduled actions (time-based triggers)
+            3. ✓Event-based triggers (react to messages or events)
+            4. ✓Responses are concise (≤ 3 lines)
+            5. ✓External tool integration mentioned or implemented
+            6. ✓Action log or summary available
+            7. ✓Clear setup instructions included
+               1. ✗No slash commands (fails #1)
+               2. ✗No scheduled actions or event triggers (fails #2, #3)
+               3. ✗No external integrations (fails #5)
+               4. ✗No logs (fails #6)
+               5. ✗Bot adds friction instead of removing it
+                  1. "A bot that responds to every message in every channel with 'I am a bot. Please see your admin for help.' No commands, no scheduling, no integrations, no logs."
+6. Finance
+   1.   Investment Portfolio Tracker
+      1. Build an investment tracking tool for individual investors and finance-minded users that helps them monitor and analyze their portfolio performance in one clear, organized place. The project is for personal finance management and regular portfolio review, and the user is typically someone actively managing holdings who wants precise, interpretable data without having to jump between brokerage accounts or spreadsheets. This project should fit the vibe of precise, polished, and data-heavy. Include holdings tracking, allocation breakdowns, gains and losses, historical performance, trend charts, risk and diversification summaries, and easy asset management. Make the core flow feel structured and trustworthy so users can assess the health of their portfolio at a glance and make confident, informed decisions.
+         1. ✓ Holdings table with ticker, shares, cost basis, current value, gain/loss
+         2. ✓ Allocation breakdown chart (pie, donut, or bar)
+         3. ✓ Historical performance chart over time
+         4. ✓ Total portfolio value and total gain/loss summary
+         5. ✓ Risk or diversification summary present
+         6. ✓ Add/edit/remove holdings functionality
+         7. ✓ Real or mock market data integration
+         8. ✓ Clean, scannable, data-heavy layout
+            1. ✗ Just a list of tickers with no values (fails #1)
+            2. ✗ No allocation or performance charts (fails #2, #3)
+            3. ✗ No gain/loss calculation (fails #1, #4)
+            4. ✗ No risk summary (fails #5)
+            5. ✗ No asset management UI (fails #6)
+               1. "A simple HTML table with two columns: Ticker and Shares. No prices, no charts, no gain/loss calculations, and no way to add or edit holdings."
+   2.  Budgeting App 
+      1. Build a budgeting application for everyday users that helps them take control of their income, expenses, and savings goals without feeling overwhelmed by their own finances. The project is for personal day-to-day financial management, and the user is typically someone who wants to spend more intentionally but struggles to see where their money actually goes each month. This project should fit the vibe of simple, clear, and supportive. Include income tracking, expense categorization, monthly summaries, visual spending breakdowns, savings goal tracking, and overspending alerts. Make the core flow feel encouraging and transparent so users finish each session feeling more in control rather than stressed about their finances.
+         1. A React app with a transaction log (date, amount, category, note), CSV import with auto-detect columns, and category budget cards showing spent/remaining with a progress bar. Alerts at 80% and 100% of budget. Monthly summary shows total in/out and net savings. A chart shows spending trends over 3-6 months. Recurring transactions auto-populate on schedule.
+            1. ✓Transaction entry: manual input with date, amount, category, note
+            2. ✓CSV import with auto-column detection
+            3. ✓Category budget limits with spent/remaining display
+            4. ✓Alert or visual warning at budget threshold
+            5. ✓Monthly summary (income, expenses, net savings)
+            6. ✓Trend chart spanning multiple months
+            7. ✓Recurring transaction support
+            8. ✓Data persists across sessions
+               1. ✗A template, not a built app (fails all criteria)
+               2. ✗No CSV import (fails #2)
+               3. ✗No budget limits or alerts (fails #3, #4)
+               4. ✗No charts or trends (fails #6)
+               5. ✗No recurring transactions (fails #7)
+                  1. "A spreadsheet template in Google Sheets with columns for date, amount, and category. Use SUM formulas to total your expenses."
+   3.  Trading Simulator
+      1.  Build a trading simulator for aspiring traders and finance learners that helps them test and refine investment strategies using simulated funds without any real financial risk. The project is for self-directed learning and strategy experimentation, and the user is typically someone curious about markets who wants to build intuition and skill before committing real money. This project should fit the vibe of structured, insight-driven, and data-focused rather than gamified. Include paper trading with real or historical market data, trade and performance metric tracking, strategy outcome analysis, side-by-side strategy comparison, and profit and loss visualizations over time. Make the core flow feel analytical and educational so users come away with genuine insight into what works, what doesn't, and why.
+         1. ✓ Paper trading with simulated funds
+         2. ✓ Real or historical market data integration
+         3. ✓ Trade execution and full trade history log
+         4. ✓ Performance metrics (P&L, win rate, returns)
+         5. ✓ Strategy outcome analysis with key statistics
+         6. ✓ Side-by-side strategy comparison view
+         7. Be able to add a stock
+         8. Be able to remove a stock
+         9. Be able to simulate 
+            1. ✗ No historical or live market data (fails #2)
+            2. ✗ No trade history log (fails #3)
+            3. ✗ No performance metrics beyond final balance (fails #4)
+            4. ✗ No strategy comparison view (fails #6)
+            5. ✗ Gamified UI contradicts educational vibe
+               1. "A button that randomly increases or decreases your fake balance with flashy animations and a leaderboard. No real market data, no trade history, no performance analytics, no strategy comparison."
+7. Health
+   1.   Personal Health & Wellness Dashboard
+      1. Build a personal health and wellness dashboard for health-conscious users that helps them track and visualize their key daily habits in one unified place without it feeling like a chore. The project is for daily personal use on any device, and the user is typically someone trying to build healthier routines who needs logging to be fast enough that they'll actually stick with it. This project should fit the vibe of clean, motivating, and data-light. Include sleep tracking (hours per night and quality), steps and activity (daily count and weekly goal), water intake (daily cups and streak), and mood logging (emoji-based across 5 levels); show trend charts per metric, an overall Wellness Score from 0 to 100, and localStorage persistence. Make the core flow feel so fast and frictionless that users can log today's full data in under 30 seconds.
+         1. A card-based dark dashboard. Each card shows today's value, a mini trend chart, and delta vs. last week. Top summary bar shows overall Wellness Score. Clicking any card opens a modal with a 30-day chart and a log form. A 'Log Today' floating button opens a quick-entry form covering all metrics. Data persists in localStorage.\
+            1. ✓All 4 metrics displayed: sleep, steps, water, mood
+            2. ✓Trend chart per metric (7-30 days)
+            3. ✓Overall Wellness Score computed and displayed
+            4. ✓Delta vs. last week shown on each card
+            5. ✓"Log Today" flow takes under 30 seconds
+            6. ✓Modal with 30-day chart per metric
+            7. ✓Data persists across sessions (localStorage)
+            8. ✓Handles fewer than 3 data points gracefully
+               1. ✗No charts or trend visualization (fails #2)
+               2. ✗No Wellness Score (fails #3)
+               3. ✗No delta comparison (fails #4)
+               4. ✗Logging is friction-heavy (fails #5)
+               5. ✗No data persistence (fails #7)
+                  1. "A health app. Enter your sleep hours in a text box. Enter your steps. Click Save. Your data is shown in a list below."
+   2.  Calorie & Macro Tracker
+      1. Build a calorie and macro tracker for nutrition-focused users that helps them log meals and stay on top of their daily and weekly nutritional targets with precision and without friction. The project is for daily diet tracking, and the user is typically someone with specific fitness or health goals who wants detailed nutritional data without manually calculating everything themselves. This project should fit the vibe of precise, structured, and data-heavy. Include customizable daily targets for calories, protein, carbs, fat, and fiber; food logging by name with manual macro entry or Open Food Facts API search by name or barcode; meal type categorization (Breakfast, Lunch, Dinner, Snack) with serving size and auto-calculated macros; a daily view with macro progress bars, a circular calorie ring, and a meal-grouped log; a weekly view with a stacked macro bar chart and calorie vs goal line chart; a nutrition summary donut chart; the ability to copy yesterday's meals to today; a custom food library; CSV export; and streaks for hitting daily protein goals. Make the core flow feel thorough yet fast so power users can log a full meal in seconds. 
+         1. ✓ Customizable daily targets (calories, protein, carbs, fat, fiber)
+         2. ✓ Open Food Facts API search by name and barcode
+         3. ✓ Manual macro entry for unlisted foods
+         4. ✓ Meal categorization (Breakfast, Lunch, Dinner, Snack)
+         5. ✓ Serving size with auto-calculated macros
+         6. ✓ Daily view: circular calorie ring + macro progress bars + meal-grouped log
+         7. ✓ Weekly view: stacked macro bar chart + calorie vs goal line chart
+         8. ✓ Nutrition summary donut chart
+         9. ✓ Copy yesterday's meals to today
+         10. ✓ Custom food library
+         11. ✓ CSV export
+         12. ✓ Protein-goal streak counter
+            1. ✗ No API integration — manual entry only (fails #2)
+            2. ✗ No meal categorization (fails #4)
+            3. ✗ No charts of any kind (fails #6, #7, #8)
+            4. ✗ No copy-yesterday feature (fails #9)
+            5. ✗ No custom library or export (fails #10, #11)
+            6. ✗ Repeating entries every day — high friction defeats power-user goal
+               1. "A form with one text input for 'food' and one for 'calories'. Submissions appear in a list. No macros beyond calories, no API search, no charts, no meal grouping, no library."
+   3. Workout Logger with Progress Charts
+      1. Build a workout logging app for strength training enthusiasts that helps them track sessions, monitor progressive overload, and celebrate personal records in one structured, always-available tool. The project is for use during and after gym sessions, and the user is typically someone following a structured training program who wants to stop relying on notes apps or paper logs and start seeing their progress visualized clearly over time. This project should fit the vibe of focused, data-heavy, and motivating. Include customizable workout templates with ordered exercises and default sets, reps, and rest times; an active session mode with per-set weight and reps entry, auto-starting rest timers, and auto-save as you go; an exercise detail view with a max weight line chart, volume chart, and PR badge with celebration animation; a calendar heatmap of training days; monthly stats including total sessions, total volume, and most trained muscle groups; superset support; per-session notes; a built-in exercise library with muscle group tags; and CSV export. Make the core flow feel seamless and rewarding so logging a session mid-workout never breaks focus and checking progress afterward always feels worth it.
+         1. ✓ Customizable workout templates with ordered exercises and default sets/reps/rest
+         2. ✓ Active session mode with per-set weight + reps entry
+         3. ✓ Auto-starting rest timer after each set
+         4. ✓ Autosave during session
+         5. ✓ Exercise detail view with max weight line chart and volume chart
+         6. ✓ PR badge with celebration animation on new record
+         7. ✓ Calendar heatmap of training days
+         8. ✓ Monthly stats: sessions, volume, top muscle groups
+         9. ✓ Superset support
+         10. ✓ Per-session notes
+         11. ✓ Exercise library tagged by muscle group
+         12. ✓ CSV export
+            1. ✗ No templates — every exercise entered manually each session (fails #1)
+            2. ✗ No rest timer (fails #3)
+            3. ✗ No autosave — risk of losing data mid-workout (fails #4)
+            4. ✗ No charts or PR tracking (fails #5, #6)
+            5. ✗ No heatmap or monthly stats (fails #7, #8)
+            6. ✗ Friction breaks focus mid-session
+               1. "A form to enter exercise name, weight, and reps for each set. Click Save when done. No templates, no rest timer, no charts, no progress tracking, no PR detection."
