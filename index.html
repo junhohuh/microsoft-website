@@ -2262,23 +2262,21 @@ const panels = {
 function makeUseCase(label) {
   return {
     label,
-    polishedPrompt: "[Placeholder] Polished prompt body. Replace this with the final, well-scoped prompt copy that demonstrates how a thoughtful student would phrase the request — including context, constraints, and desired output format.",
-    idealResponse: "[Placeholder] Ideal response. Replace this with the canonical model output we would consider exemplary for this use case — including structure, tone, and the key facts/sections it should hit.",
-    criteria: [
-      "[Placeholder] Criterion text.",
-      "[Placeholder] Criterion text.",
-      "[Placeholder] Criterion text.",
-      "[Placeholder] Criterion text."
-    ],
+    polishedPrompt: "",
+    idealResponse: "",
+    criteria: ["", "", "", ""],
     badResponse: {
-      text: "[Placeholder] Bad response. Replace with a representative weak output that misses the criteria above so reviewers can see the contrast.",
-      failsAt: [
-        "[Placeholder] Criterion text.",
-        "[Placeholder] Criterion text.",
-        "[Placeholder] Criterion text."
-      ]
+      text: "",
+      failsAt: ["", "", ""]
     }
   };
+}
+function makeThreePlaceholders(prefix) {
+  return [
+    makeUseCase(`${prefix} Use Case 1`),
+    makeUseCase(`${prefix} Use Case 2`),
+    makeUseCase(`${prefix} Use Case 3`)
+  ];
 }
 
 const promptLibraries = {
@@ -2289,10 +2287,7 @@ const promptLibraries = {
     statColor: AMBER,
     desc: "Prompts that help students draft, remix, and polish creative work — captions, scripts, story beats, and short-form social posts.",
     border: AMBER_DEEP,
-    useCases: [
-      makeUseCase("Short-form social caption"),
-      makeUseCase("Story outline for a short film")
-    ]
+    useCases: makeThreePlaceholders("Creative & Social")
   },
   pl2: {
     kind: "promptLibrary",
@@ -2301,10 +2296,7 @@ const promptLibraries = {
     statColor: AMBER,
     desc: "Prompts that turn fuzzy goals into concrete, time-boxed plans — daily routines, weekly reviews, and meeting prep.",
     border: AMBER_DEEP,
-    useCases: [
-      makeUseCase("Weekly study schedule"),
-      makeUseCase("Meeting agenda from rough notes")
-    ]
+    useCases: makeThreePlaceholders("Productivity")
   },
   pl3: {
     kind: "promptLibrary",
@@ -2313,10 +2305,7 @@ const promptLibraries = {
     statColor: AMBER,
     desc: "Prompts for academic work — thesis statements, structured arguments, source synthesis, and study-guide generation.",
     border: AMBER_DEEP,
-    useCases: [
-      makeUseCase("Argumentative essay outline"),
-      makeUseCase("Exam study guide from lecture notes")
-    ]
+    useCases: makeThreePlaceholders("Academic")
   },
   pl4: {
     kind: "promptLibrary",
@@ -2325,10 +2314,7 @@ const promptLibraries = {
     statColor: AMBER,
     desc: "Prompts focused on shipping web work and pulling insight from data — UI components, SQL/queries, and quick exploratory analysis.",
     border: AMBER_DEEP,
-    useCases: [
-      makeUseCase("Build a responsive landing section"),
-      makeUseCase("Summarize a CSV into key findings")
-    ]
+    useCases: makeThreePlaceholders("Web & Data")
   },
   pl5: {
     kind: "promptLibrary",
@@ -2337,10 +2323,7 @@ const promptLibraries = {
     statColor: AMBER,
     desc: "Prompts that help students reason about money — building budgets, comparing plans, and modeling small financial decisions.",
     border: AMBER_DEEP,
-    useCases: [
-      makeUseCase("Personal monthly budget"),
-      makeUseCase("Subscription audit & cuts")
-    ]
+    useCases: makeThreePlaceholders("Finance")
   },
   pl6: {
     kind: "promptLibrary",
@@ -2349,12 +2332,32 @@ const promptLibraries = {
     statColor: AMBER,
     desc: "Prompts oriented around healthy routines — workout structures, sleep hygiene, and habit-tracking scaffolds.",
     border: AMBER_DEEP,
-    useCases: [
-      makeUseCase("Beginner 4-week fitness plan"),
-      makeUseCase("Sleep hygiene reset checklist")
-    ]
+    useCases: makeThreePlaceholders("Health")
   }
 };
+
+promptLibraries.pl2.useCases[0].label = "Habit Tracker App";
+promptLibraries.pl2.useCases[0].polishedPrompt = `Build a habit tracker for everyday users that helps them build consistency by tracking up to 10 habits across a 7-day week, all within a single HTML file using vanilla JS. The project is for personal daily use on any device, and the user is typically someone trying to build routines who needs something lightweight and distraction-free. This project should fit the vibe of clean, minimal, and no-fuss. Include a row of Mon–Sun checkboxes per habit that triggers a streak badge when all 7 are checked, a Reset Week button that clears checkboxes while preserving habit names, and localStorage persistence so progress is never lost. Keep the design mobile-friendly using flexbox layout with no table elements, and make the core flow feel instant and satisfying so checking off habits feels rewarding rather than tedious.`;
+promptLibraries.pl2.useCases[0].idealResponse = `A clean app with a daily dashboard showing today's habits as tappable checkboxes. Each habit shows streak count. Habit creation: name, frequency (daily/weekly/custom), optional reminder time. A calendar heatmap shows completion history. Weekly and monthly summary cards show trends. The UI avoids red/failure states—missed days are grey, not alarming.`;
+promptLibraries.pl2.useCases[0].criteria = [
+  "Habit Creation with flexible frequency options",
+  "Daily check-in UI (one-tap or minimal friction)",
+  "Streak counter visible per habit",
+  "Weekly and monthly summary views",
+  "Visual Progress (heatmap, chart, or graph)",
+  "Customizable reminder system",
+  "Non-shaming visual language for missed days",
+  "Logging interaction takes ≤ 5 seconds"
+];
+promptLibraries.pl2.useCases[0].badResponse.text = `A habit tracker with a table showing each day of the month. Missed days highlighted in red. Open a separate form to log each habit, entering date and habit name manually.`;
+promptLibraries.pl2.useCases[0].badResponse.failsAt = [
+  "Red highlighting creates guilt the prompt wanted to avoid",
+  "Manual form entry contradicts quick logging",
+  "No streak tracking",
+  "No charts or heatmaps",
+  "No reminders"
+];
+
 
 // merge into one panels object lookup
 Object.assign(panels, promptLibraries);
